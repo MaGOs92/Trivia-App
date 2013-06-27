@@ -1,1 +1,0 @@
-Projet stage Trivia Marketing
