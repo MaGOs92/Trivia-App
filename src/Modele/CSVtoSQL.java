@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.mysql.jdbc.Connection;
 
@@ -62,6 +64,7 @@ public class CSVtoSQL {
 		this.password = password;
 	}
 	
+	// Ouverture de la connection
 	public Connection openConnection() {
 		
 		try {
@@ -92,7 +95,7 @@ public class CSVtoSQL {
 		return connection;
 	}
 
-
+	// Fermeture de la connection
 	public void closeConnection(Connection co){
 		try {
 			co.close();
@@ -126,7 +129,7 @@ public class CSVtoSQL {
 			
 			else{
 				
-				System.out.println("La taille maximum du fichier doit être inférieureà 100 Mo.");	
+				System.out.println("La taille maximum du fichier doit être inférieure à 100 Mo.");	
 			}
 			
 			System.out.print("Chemin du fichier CSV à importer : ");
@@ -139,19 +142,36 @@ public class CSVtoSQL {
 		return fichierCSV;
 		
 	}
-	/*
+	// La table dans laquelle sera importé le contenu du fichier portera le même nom que ce dernier.
+	// Si l'expression régulière échoue, le nom de la table sera tableDefault
 	public String nomDeLaTable(String fichierCSV){
 		
-		return fichierCSV.
-	}
-	*/
-	public void deleteTable(Connection co){
+		String nomTable;
 		
-		String requeteSuppresionTable = "DROP TABLE IF EXISTS tableTest";
+		Pattern regex = Pattern.compile("(\\)(.+?)(.csv)");
+		
+		Matcher matcher = regex.matcher(fichierCSV);
+		
+		if (matcher.find()){
+			nomTable = matcher.group(1);
+			if (nomTable.indexOf('-') != -1){nomTable.replace('-','_');}
+			if (nomTable.indexOf('?') != -1){nomTable.replace('?','_');}
+			if (nomTable.indexOf('(') != -1){nomTable.replace('(','_');}
+			if (nomTable.indexOf(')') != -1){nomTable.replace(')','_');}
+		}
+		else
+			nomTable = "tableDefault";
+		
+		return nomTable;
+	}
+	// Destruction de la table pour être sur quel n'existe pas déja quand on va la recréer
+	public void deleteTable(Connection co, String nomTable){
+		
+		String requeteSuppresionTable = "DROP TABLE IF EXISTS ";
 		
 		try{
 			
-			PreparedStatement statementSuppr = co.prepareStatement(requeteSuppresionTable);
+			PreparedStatement statementSuppr = co.prepareStatement(requeteSuppresionTable + nomTable);
 			statementSuppr.executeUpdate();
 		}
 		
@@ -161,10 +181,10 @@ public class CSVtoSQL {
 			return;
 		}
 		
-		System.out.println("Une table a été détruite.");
+		System.out.println("La table " + nomTable + " a été détruite.");
 		
 	}
-	
+	// Fonction reccueillant le nom des champs de la table et leur type
 	public String champsDeLaTable(String fichierCSV){
 		
 		String champs ="";
@@ -234,10 +254,10 @@ public class CSVtoSQL {
 		
 		return champs;
 	}
-	
-	public void createTable(Connection co, String champs){
+	// Fonction de création de la table dans laquelle va être importé le fichier
+	public void createTable(Connection co, String nomTable, String champs){
 		
-		String requeteCreationTable = "CREATE TABLE tableTest(";
+		String requeteCreationTable = "CREATE TABLE "+ nomTable +"(";
 		requeteCreationTable += champs;
 		requeteCreationTable += ")";		
 		
@@ -252,17 +272,17 @@ public class CSVtoSQL {
 			return;
 		}
 		
-		System.out.println("Une table a été créée");
+		System.out.println("La table " + nomTable + " a été créee.");
 	}
-	
-	public void loadFichierCSV(Connection co, String fichierCSV){
+	// Fonction qui charge les données du fichier CSV dans la table
+	public void loadFichierCSV(Connection co, String nomTable, String fichierCSV){
 		
 		String as = new String ("\\"); 
 		String das = new String("\\\\");
 		
 		String fichierCSVdoubleBS = fichierCSV.replace(as, das);
 		
-		String requeteLoadData = "LOAD DATA LOCAL INFILE '" + fichierCSVdoubleBS + "' INTO TABLE tableTest FIELDS TERMINATED BY ';' IGNORE 1 LINES";
+		String requeteLoadData = "LOAD DATA LOCAL INFILE '" + fichierCSVdoubleBS + "' INTO TABLE " + nomTable + " FIELDS TERMINATED BY ';' IGNORE 1 LINES";
 		
 		try{
 			Statement StatementLoad = co.prepareStatement(requeteLoadData);
@@ -277,24 +297,26 @@ public class CSVtoSQL {
 			return;
 		}
 		
-		System.out.println("Le fichier a été importé dans MySQL.");
+		System.out.println("Le fichier a été importé dans la table " + nomTable);
 	}
 	
-	public static void main (String[] args) throws IOException{
+	public static void main (String[] args){
 
 		CSVtoSQL main = new CSVtoSQL("localhost:3306/dbtriviacsv", "root", "root");
 		
 		Connection co = main.openConnection();
 		
-		main.deleteTable(co);
-		
 		String chemin = main.cheminDuCSV();
 		
 		String champs = main.champsDeLaTable(chemin);
 		
-		main.createTable(co, champs);
+		String nomTable = main.nomDeLaTable(chemin);
 		
-		main.loadFichierCSV(co, chemin);
+		main.deleteTable(co, nomTable);
+		
+		main.createTable(co,nomTable, champs);
+		
+		main.loadFichierCSV(co,nomTable, chemin);
 		
 		main.closeConnection(co);
 	
