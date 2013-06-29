@@ -148,19 +148,16 @@ public class CSVtoSQL {
 		
 		String nomTable;
 		
-		Pattern regex = Pattern.compile("(\\)(.+?)(.csv)");
+		Pattern pat = Pattern.compile("\\");
 		
-		Matcher matcher = regex.matcher(fichierCSV);
+		String[] sisi = pat.split(fichierCSV);
 		
-		if (matcher.find()){
-			nomTable = matcher.group(1);
-			if (nomTable.indexOf('-') != -1){nomTable.replace('-','_');}
-			if (nomTable.indexOf('?') != -1){nomTable.replace('?','_');}
-			if (nomTable.indexOf('(') != -1){nomTable.replace('(','_');}
-			if (nomTable.indexOf(')') != -1){nomTable.replace(')','_');}
-		}
-		else
-			nomTable = "tableDefault";
+		nomTable = sisi[sisi.length-1];
+		
+		if (nomTable.indexOf('-') != -1){nomTable.replace('-','_');}
+		if (nomTable.indexOf('?') != -1){nomTable.replace('?','_');}
+		if (nomTable.indexOf('(') != -1){nomTable.replace('(','_');}
+		if (nomTable.indexOf(')') != -1){nomTable.replace(')','_');}
 		
 		return nomTable;
 	}
