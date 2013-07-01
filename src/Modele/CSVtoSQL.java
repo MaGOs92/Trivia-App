@@ -10,11 +10,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import com.mysql.jdbc.Connection;
 
 public class CSVtoSQL {
+	
+	static final int LIGNES_TEST = 5;
 	
 	private String url;
 	
@@ -142,16 +143,10 @@ public class CSVtoSQL {
 		
 	}
 	// La table dans laquelle sera importé le contenu du fichier portera le même nom que ce dernier.
-	// Si l'expression régulière échoue, le nom de la table sera tableDefault
 	public String nomDeLaTable(String fichierCSV){
-		
-		String nomTable;
-		
-		Pattern pat = Pattern.compile("\\");
-		
-		String[] sisi = pat.split(fichierCSV);
-		
-		nomTable = sisi[sisi.length-1];
+			
+		String nomTable = fichierCSV.substring(fichierCSV.lastIndexOf("\\") + 1, fichierCSV.indexOf('.'));
+
 		
 		if (nomTable.indexOf('-') != -1){nomTable.replace('-','_');}
 		if (nomTable.indexOf('?') != -1){nomTable.replace('?','_');}
@@ -160,6 +155,98 @@ public class CSVtoSQL {
 		
 		return nomTable;
 	}
+	
+	public String[] typeDeDonnees(BufferedReader br){
+		
+		String donnee;
+		
+		String [] [] tabDonnee = new String [6][100];
+		
+		boolean estEntier = false;
+		
+		boolean estFloat = false;
+		
+		int i = 1;
+		
+		// Récupération des 5 premières lignes de données dans un tableau.
+		
+		try{
+			
+		while((donnee = br.readLine())!= null && i < 6)
+		   {
+			  
+			  tabDonnee[i] = donnee.split(";");
+		      i++;
+			 
+		   }
+		   
+		   br.close();
+		}
+		catch (IOException e) 
+		{
+			 System.out.println("Problème de lecture du fichier.");
+		}
+		
+		
+		for (i = 0 ; i < 6; i ++)
+			for (int j = 0; j < tabDonnee[i].length; j++)
+				System.out.println(tabDonnee[i][j]);
+		
+		
+		String[] type = new String[tabDonnee[0].length];
+		
+		for ( i = 0; i < tabDonnee[0].length ; i ++)
+		   {
+				int j = 0;
+			   while (estUnEntier(tabDonnee[j][i]) && j < 6){
+				   estEntier = true;
+				   j++;
+			   }
+			   j = 0;
+			   /*
+			   while (estUnFloat(tabDonnee[j][i]) && j < 6){
+				   estFloat = true;
+				   j++;
+			   }
+			   */
+			   if (estEntier){
+				   type[i] = "INTEGER";
+			   }
+			   else if (estFloat){
+				   type[i] = "FLOAT";
+			   }
+			   else
+				   type[i] = "VARCHAR(100)";
+			   
+			   for (i = 0; i < tabDonnee[0].length; i++)
+				   System.out.println(type[i]);
+			   
+		   }
+		   
+		   return type;
+	
+	}
+	
+	// Renvoit la lecture du fichier CSV
+	public BufferedReader lecteurDeFichier(String fichierCSV){
+		
+		FileReader fr = null;
+		
+		try{
+			fr = new FileReader(fichierCSV);
+			}
+		catch (FileNotFoundException e)
+			{
+			   System.out.println("Le fichier est introuvable !");
+			}
+		
+		BufferedReader br = new BufferedReader(fr);
+		
+		return br;
+		
+	}
+	
+	
 	// Destruction de la table pour être sur quel n'existe pas déja quand on va la recréer
 	public void deleteTable(Connection co, String nomTable){
 		
@@ -180,6 +267,7 @@ public class CSVtoSQL {
 		System.out.println("La table " + nomTable + " a été détruite.");
 		
 	}
+	
 	// Fonction reccueillant le nom des champs de la table et leur type
 	public String champsDeLaTable(String fichierCSV){
 		
@@ -245,11 +333,42 @@ public class CSVtoSQL {
 		}
 		catch (IOException e) 
 		{
-			 System.out.println( e );
+			 System.out.println("Problème de lecture du fichier.");
 		}
 		
 		return champs;
 	}
+	
+	// Fonction permettant de tester si un String est un entier
+	public boolean estUnEntier(String chaine) {
+		try {
+			Integer.parseInt(chaine);
+		} catch (NumberFormatException e){
+			return false;
+		}
+ 
+		return true;
+	}
+	
+	// Fonction permettant de tester si un String est un Float
+	public boolean estUnFloat(String chaine){
+		try {
+			Float.parseFloat(chaine);
+		}
+		catch (NumberFormatException e){
+			return false;
+		}
+		return true;
+	}
+	/*
+	// Fonction permettant de tester si un String est une date
+	public boolean estUneDate(String chaine){
+		try{
+			
+		}
+		catch 
+	}
+	*/
 	// Fonction de création de la table dans laquelle va être importé le fichier
 	public void createTable(Connection co, String nomTable, String champs){
 		
@@ -293,7 +412,7 @@ public class CSVtoSQL {
 			return;
 		}
 		
-		System.out.println("Le fichier a été importé dans la table " + nomTable);
+		System.out.println("Le fichier a été importé dans la table " + nomTable + ".");
 	}
 	
 	public static void main (String[] args){
@@ -307,6 +426,8 @@ public class CSVtoSQL {
 		String champs = main.champsDeLaTable(chemin);
 		
 		String nomTable = main.nomDeLaTable(chemin);
+		
+		main.typeDeDonnees(main.lecteurDeFichier(chemin));
 		
 		main.deleteTable(co, nomTable);
 		
