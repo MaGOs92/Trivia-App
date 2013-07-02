@@ -1,113 +1,23 @@
 package Modele;
 
-import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 import com.mysql.jdbc.Connection;
 
 public class CSVtoSQL {
 	
-	static final int LIGNES_TEST = 5;
-	
-	private String url;
-	
-	private String user;
-	
-	private String password;
-	
-	CSVtoSQL(){
-
-	}
-	
-	CSVtoSQL(String url, String user, String password){
-		
-		this.url = url;
-		this.user = user;
-		this.password = password;
-	}
-	
-	
-	public String getUrl() {
-		return url;
-	}
-
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-
-	public String getUser() {
-		return user;
-	}
-
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-
-	public String getPassword() {
-		return password;
-	}
-
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	// Ouverture de la connection
-	public Connection openConnection() {
-		
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} 
-		catch (ClassNotFoundException e) {
-			System.out.println("Driver JDBC introuvable");
-			e.printStackTrace();
-		}
-	 	
-		Connection connection = null;
-		
-	 
-		try {
-			connection = (Connection)  DriverManager.getConnection("jdbc:mysql://" + this.getUrl(), this.getUser(), this.getPassword());
-	 
-		} catch (SQLException e) {
-			System.out.println("Connection échouée, vérifier les paramètres de connection à la base de donnée.");
-			e.printStackTrace();
-		}
-	 
-		if (connection != null) {
-			System.out.println("Connection réussie");
-		} else {
-			System.out.println("Connection échouée");
-		}
-		
-		return connection;
-	}
-
-	// Fermeture de la connection
-	public void closeConnection(Connection co){
-		try {
-			co.close();
-			System.out.println("Connexion fermée!");
-		}
-		catch (SQLException e) {
-			System.out.println("Impossible de fermer la connexion");
-		}	
-	}
-
 	// Fonction qui renvoit le chemin du fichier CSV à importer
-	public String cheminDuCSV(){
+	public static String cheminDuCSV(){
 		
 		System.out.print("Chemin du fichier CSV à importer : ");
 		
@@ -143,7 +53,7 @@ public class CSVtoSQL {
 		
 	}
 	// La table dans laquelle sera importé le contenu du fichier portera le même nom que ce dernier.
-	public String nomDeLaTable(String fichierCSV){
+	public static String nomDeLaTable(String fichierCSV){
 			
 		String nomTable = fichierCSV.substring(fichierCSV.lastIndexOf("\\") + 1, fichierCSV.indexOf('.'));
 
@@ -156,70 +66,68 @@ public class CSVtoSQL {
 		return nomTable;
 	}
 	
-	public String[] typeDeDonnees(BufferedReader br){
+
+	// Fonction qui renvoit un tableau contenant le type de chaque colonne de la table
+	public static String[] typeDeDonnees(FileReader fr) throws IOException{
 		
-		String donnee;
+		CSVReader reader = new CSVReader(fr, ';');
+				
+		String [] [] tabDonnee = new String [6][];
 		
-		String [] [] tabDonnee = new String [6][100];
+		boolean estEntier;
 		
-		boolean estEntier = false;
+		boolean estFloat;
 		
-		boolean estFloat = false;
+		int i = 0;
 		
-		int i = 1;
-		
-		// Récupération des 5 premières lignes de données dans un tableau.
-		
-		try{
-			
-		while((donnee = br.readLine())!= null && i < 6)
+		// Récupération des 5 premières lignes de données dans un tableau.		
+
+		while((tabDonnee[i] = reader.readNext()) != null && i < 5)
 		   {
-			  
-			  tabDonnee[i] = donnee.split(";");
-		      i++;
-			 
+			  i++;
 		   }
-		   
-		   br.close();
+		reader.close();
+		
+		for (i = 0 ; i < 6; i ++){
+			for (int j = 0; j < tabDonnee[0].length; j++)
+				System.out.print(tabDonnee[i][j] + "\t");
+			System.out.println("");
 		}
-		catch (IOException e) 
-		{
-			 System.out.println("Problème de lecture du fichier.");
-		}
-		
-		
-		for (i = 0 ; i < 6; i ++)
-			for (int j = 0; j < tabDonnee[i].length; j++)
-				System.out.println(tabDonnee[i][j]);
-		
+				
 		
 		String[] type = new String[tabDonnee[0].length];
 		
 		for ( i = 0; i < tabDonnee[0].length ; i ++)
 		   {
-				int j = 0;
-			   while (estUnEntier(tabDonnee[j][i]) && j < 6){
+			   int j = 1;
+			   estEntier = false;
+			   estFloat = false;
+			   
+			   while (estUnEntier(tabDonnee[j][i]) && j < 5){
+				   //System.out.println(tabDonnee[j][i]);
 				   estEntier = true;
 				   j++;
 			   }
-			   j = 0;
-			   /*
-			   while (estUnFloat(tabDonnee[j][i]) && j < 6){
+			   
+			   j = 1;
+			   
+			   while (estUnFloat(tabDonnee[j][i]) && j < 5){
 				   estFloat = true;
 				   j++;
 			   }
-			   */
+			   
 			   if (estEntier){
 				   type[i] = "INTEGER";
 			   }
+			   
 			   else if (estFloat){
 				   type[i] = "FLOAT";
 			   }
+			   
 			   else
 				   type[i] = "VARCHAR(100)";
 			   
-			   for (i = 0; i < tabDonnee[0].length; i++)
-				   System.out.println(type[i]);
+			   System.out.println(type[i]);
 			   
 		   }
 		   
@@ -228,7 +136,7 @@ public class CSVtoSQL {
 	}
 	
 	// Renvoit la lecture du fichier CSV
-	public BufferedReader lecteurDeFichier(String fichierCSV){
+	public static FileReader lecteurDeFichier(String fichierCSV){
 		
 		FileReader fr = null;
 		
@@ -240,15 +148,13 @@ public class CSVtoSQL {
 			   System.out.println("Le fichier est introuvable !");
 			}
 		
-		BufferedReader br = new BufferedReader(fr);
-		
-		return br;
+		return fr;
 		
 	}
 	
 	
 	// Destruction de la table pour être sur quel n'existe pas déja quand on va la recréer
-	public void deleteTable(Connection co, String nomTable){
+	public static void deleteTable(Connection co, String nomTable){
 		
 		String requeteSuppresionTable = "DROP TABLE IF EXISTS ";
 		
@@ -268,79 +174,56 @@ public class CSVtoSQL {
 		
 	}
 	
-	// Fonction reccueillant le nom des champs de la table et leur type
-	public String champsDeLaTable(String fichierCSV){
+	// Fonction reccueillant le nom des champs de la table et leur type et assemble une chaine de caractères
+	public static String champsDeLaTable(String [] type, String [] nomTable){
 		
 		String champs ="";
 		
-		try
-		{
-			FileReader fr = new FileReader(fichierCSV);
-			
-			BufferedReader br = new BufferedReader(fr);
-		  
-			String chaine;
-		 
-			chaine = br.readLine();
-		  
-			String[] tabChaine = chaine.split(";");
-		  
-		  for (int i = 0 ; i < tabChaine.length ; i++){
-			  
-			  if (i == 0){
-				  champs += "id INTEGER NOT NULL PRIMARY KEY,";
-			  }
-			  else if (i == tabChaine.length-1){
-				  
-				 if (tabChaine[i].indexOf('-') != -1 || tabChaine[i].indexOf('?') != -1 || tabChaine[i].indexOf('(') != -1 || tabChaine[i].indexOf(')') != -1){
-					  tabChaine[i] = tabChaine[i].replace('-','_');
-					  tabChaine[i] = tabChaine[i].replace('?','_');
-					  tabChaine[i] = tabChaine[i].replace('(','_');
-					  tabChaine[i] = tabChaine[i].replace(')','_');
-				 }
-				 if (tabChaine[i].length() > 60){
-					  tabChaine[i] = tabChaine[i].substring(0, 40);
-				  }
-				  champs += tabChaine[i] + " VARCHAR(100)";
-
-			  }
-			  else{
-				  
-				  if (tabChaine[i].indexOf('-') != -1 || tabChaine[i].indexOf('?') != -1 || tabChaine[i].indexOf('(') != -1 || tabChaine[i].indexOf(')') != -1){
-					  tabChaine[i] = tabChaine[i].replace('-','_');
-					  tabChaine[i] = tabChaine[i].replace('?','_');
-					  tabChaine[i] = tabChaine[i].replace('(','_');
-					  tabChaine[i] = tabChaine[i].replace(')','_');
-				  }
-				  if (tabChaine[i].length() > 60){
-					  tabChaine[i] = tabChaine[i].substring(0, 40);
-				  }
-				  
-				  champs += tabChaine[i] + " VARCHAR(100),";
-
-			  }
-		  }
-		  
-		   br.close();
-		   System.out.println(champs);
-		   
-		   System.out.println(fichierCSV);
-		   
-		}
-		catch (FileNotFoundException e)
-		{
-		   System.out.println("Le fichier est introuvable !");
-		}
-		catch (IOException e) 
-		{
-			 System.out.println("Problème de lecture du fichier.");
-		}
+		for (int i = 0; i < type.length; i ++)
+			if (i == 0){
+				champs += "ID INTEGER NOT NULL PRIMARY KEY, ";
+			}
+			else if (i == type.length - 1){
+				champs += nomTable[i] + " " + type[i];
+			}
+			else
+				champs += nomTable[i] + " " + type[i] + ", ";
 		
 		return champs;
 	}
 	
+	// Fonction reccueillant le nom des colonnes de la table
+	public static String[] nomDesColonnes(FileReader fr) throws IOException{
+		
+			CSVReader reader = new CSVReader(fr, ';');
+		  
+			String[] noms;
+		 
+			noms = reader.readNext();
+			
+			reader.close();
+		  
+		  for (int i = 0 ; i < noms.length ; i++){
+			  			  
+				 if (noms[i].indexOf('-') != -1 || noms[i].indexOf('?') != -1 || noms[i].indexOf('(') != -1 || noms[i].indexOf(')') != -1){
+					  noms[i] = noms[i].replace('-','_');
+					  noms[i] = noms[i].replace('?','_');
+					  noms[i] = noms[i].replace('(','_');
+					  noms[i] = noms[i].replace(')','_');
+				 }
+				 if (noms[i].length() > 60){
+					  noms[i] = noms[i].substring(0, 40);
+				  }
+
+		  }
+		  
+		   System.out.println(noms);
+		   
+		return noms;
+	}
+	
 	// Fonction permettant de tester si un String est un entier
-	public boolean estUnEntier(String chaine) {
+	public static boolean estUnEntier(String chaine) {
 		try {
 			Integer.parseInt(chaine);
 		} catch (NumberFormatException e){
@@ -351,7 +234,7 @@ public class CSVtoSQL {
 	}
 	
 	// Fonction permettant de tester si un String est un Float
-	public boolean estUnFloat(String chaine){
+	public static boolean estUnFloat(String chaine){
 		try {
 			Float.parseFloat(chaine);
 		}
@@ -360,17 +243,9 @@ public class CSVtoSQL {
 		}
 		return true;
 	}
-	/*
-	// Fonction permettant de tester si un String est une date
-	public boolean estUneDate(String chaine){
-		try{
-			
-		}
-		catch 
-	}
-	*/
+
 	// Fonction de création de la table dans laquelle va être importé le fichier
-	public void createTable(Connection co, String nomTable, String champs){
+	public static void createTable(Connection co, String nomTable, String champs){
 		
 		String requeteCreationTable = "CREATE TABLE "+ nomTable +"(";
 		requeteCreationTable += champs;
@@ -389,8 +264,9 @@ public class CSVtoSQL {
 		
 		System.out.println("La table " + nomTable + " a été créee.");
 	}
+	
 	// Fonction qui charge les données du fichier CSV dans la table
-	public void loadFichierCSV(Connection co, String nomTable, String fichierCSV){
+	public static void loadFichierCSV(Connection co, String nomTable, String fichierCSV){
 		
 		String as = new String ("\\"); 
 		String das = new String("\\\\");
@@ -415,25 +291,21 @@ public class CSVtoSQL {
 		System.out.println("Le fichier a été importé dans la table " + nomTable + ".");
 	}
 	
-	public static void main (String[] args){
+	public static void main (String[] args) throws IOException{
 
-		CSVtoSQL main = new CSVtoSQL("localhost:3306/dbtriviacsv", "root", "root");
+		ConnexionJDBC main = new ConnexionJDBC("localhost:3306/dbtriviacsv", "root", "root");
 		
 		Connection co = main.openConnection();
 		
-		String chemin = main.cheminDuCSV();
+		String chemin = cheminDuCSV();
 		
-		String champs = main.champsDeLaTable(chemin);
+		String nomTable = nomDeLaTable(chemin);
+				
+		deleteTable(co, nomTable);
+			
+		createTable(co,nomTable, champsDeLaTable(typeDeDonnees(lecteurDeFichier(chemin)), nomDesColonnes(lecteurDeFichier(chemin))));
 		
-		String nomTable = main.nomDeLaTable(chemin);
-		
-		main.typeDeDonnees(main.lecteurDeFichier(chemin));
-		
-		main.deleteTable(co, nomTable);
-		
-		main.createTable(co,nomTable, champs);
-		
-		main.loadFichierCSV(co,nomTable, chemin);
+		loadFichierCSV(co,nomTable, chemin);
 		
 		main.closeConnection(co);
 	
