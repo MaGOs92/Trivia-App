@@ -88,6 +88,8 @@ public class CSVtoSQL {
 		   }
 		reader.close();
 		
+		System.out.println("Affichage des 5 premières lignes de la table sur lesquelles seront effectués les tests :");
+		
 		for (i = 0 ; i < 6; i ++){
 			for (int j = 0; j < tabDonnee[0].length; j++)
 				System.out.print(tabDonnee[i][j] + "\t");
@@ -126,8 +128,6 @@ public class CSVtoSQL {
 			   
 			   else
 				   type[i] = "VARCHAR(100)";
-			   
-			   System.out.println(type[i]);
 			   
 		   }
 		   
@@ -215,9 +215,7 @@ public class CSVtoSQL {
 					  noms[i] = noms[i].substring(0, 40);
 				  }
 
-		  }
-		  
-		   System.out.println(noms);
+		  }		  
 		   
 		return noms;
 	}
@@ -290,7 +288,7 @@ public class CSVtoSQL {
 		
 		System.out.println("Le fichier a été importé dans la table " + nomTable + ".");
 	}
-	
+	// C:\Users\guillaumefay\Desktop\cest.csv
 	public static void main (String[] args) throws IOException{
 
 		ConnexionJDBC main = new ConnexionJDBC("localhost:3306/dbtriviacsv", "root", "root");
@@ -307,6 +305,13 @@ public class CSVtoSQL {
 		
 		loadFichierCSV(co,nomTable, chemin);
 		
+		try {
+			TraitementJDBC traitement = new TraitementJDBC(co, nomTable);
+			traitement.dataAudit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		main.closeConnection(co);
 	
 

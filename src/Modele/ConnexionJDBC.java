@@ -1,7 +1,6 @@
 package Modele;
 
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.*;
@@ -97,23 +96,4 @@ public class ConnexionJDBC {
 		}	
 	}
 	
-	// Fonction pour exécuter une requête
-	public static ResultSet exec1Requete (String requete, Connection co, int type){
-		ResultSet res = null;
-		try {
-			Statement st;
-			if (type == 0){
-				st = (Statement) co.createStatement();
-				}
-			else {
-				st = (Statement) co.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, 
-					       	ResultSet.CONCUR_READ_ONLY);
-				}
-			res = st.executeQuery(requete);
-		}
-		catch (SQLException e){
-			System.out.println("Problème lors de l'exécution de la requete : "+requete);
-		};
-		return res;
-	}
 }
