@@ -63,6 +63,8 @@ public class CSVtoSQL {
 		if (nomTable.indexOf('(') != -1){nomTable.replace('(','_');}
 		if (nomTable.indexOf(')') != -1){nomTable.replace(')','_');}
 		
+		System.out.println(nomTable);
+		
 		return nomTable;
 	}
 	
@@ -73,10 +75,6 @@ public class CSVtoSQL {
 		CSVReader reader = new CSVReader(fr, ';');
 				
 		String [] [] tabDonnee = new String [6][];
-		
-		boolean estEntier;
-		
-		boolean estFloat;
 		
 		int i = 0;
 		
@@ -102,8 +100,9 @@ public class CSVtoSQL {
 		for ( i = 0; i < tabDonnee[0].length ; i ++)
 		   {
 			   int j = 1;
-			   estEntier = false;
-			   estFloat = false;
+			   boolean estEntier = false;
+			   
+			   //boolean estFloat = false;
 			   
 			   while (estUnEntier(tabDonnee[j][i]) && j < 5){
 				   //System.out.println(tabDonnee[j][i]);
@@ -112,20 +111,20 @@ public class CSVtoSQL {
 			   }
 			   
 			   j = 1;
-			   
+			   /*
 			   while (estUnFloat(tabDonnee[j][i]) && j < 5){
 				   estFloat = true;
 				   j++;
 			   }
-			   
+			   */
 			   if (estEntier){
 				   type[i] = "INTEGER";
 			   }
-			   
+			   /*
 			   else if (estFloat){
 				   type[i] = "FLOAT";
 			   }
-			   
+			   */
 			   else
 				   type[i] = "VARCHAR(100)";
 			   
@@ -189,6 +188,8 @@ public class CSVtoSQL {
 			else
 				champs += nomTable[i] + " " + type[i] + ", ";
 		
+		System.out.println(champs);
+		
 		return champs;
 	}
 	
@@ -205,11 +206,13 @@ public class CSVtoSQL {
 		  
 		  for (int i = 0 ; i < noms.length ; i++){
 			  			  
-				 if (noms[i].indexOf('-') != -1 || noms[i].indexOf('?') != -1 || noms[i].indexOf('(') != -1 || noms[i].indexOf(')') != -1){
+				 if (noms[i].indexOf('-') != -1 || noms[i].indexOf('?') != -1 || noms[i].indexOf('(') != -1 || noms[i].indexOf(')') != -1 || noms[i].indexOf(' ') != -1 || noms[i].indexOf('#') != -1){
 					  noms[i] = noms[i].replace('-','_');
 					  noms[i] = noms[i].replace('?','_');
 					  noms[i] = noms[i].replace('(','_');
 					  noms[i] = noms[i].replace(')','_');
+					  noms[i] = noms[i].replace(' ', '_');
+					  noms[i] = noms[i].replace('#', '_');
 				 }
 				 if (noms[i].length() > 60){
 					  noms[i] = noms[i].substring(0, 40);
@@ -232,6 +235,7 @@ public class CSVtoSQL {
 	}
 	
 	// Fonction permettant de tester si un String est un Float
+	/*
 	public static boolean estUnFloat(String chaine){
 		try {
 			Float.parseFloat(chaine);
@@ -241,7 +245,7 @@ public class CSVtoSQL {
 		}
 		return true;
 	}
-
+	*/
 	// Fonction de création de la table dans laquelle va être importé le fichier
 	public static void createTable(Connection co, String nomTable, String champs){
 		
@@ -307,7 +311,7 @@ public class CSVtoSQL {
 		
 		try {
 			TraitementJDBC traitement = new TraitementJDBC(co, nomTable);
-			traitement.dataAudit();
+			traitement.genererFichierCSV(traitement.dataAudit());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

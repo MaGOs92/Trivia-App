@@ -12,12 +12,15 @@ public class Colonne {
 	
 	private float pourcentagesCasesRemplies;
 	
-	Colonne(String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales){
+	private String[] valeursFrequentes;
+	
+	Colonne(String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes){
 		this.setNomColonne(nomColonne);
 		this.setTypeDeDonnee(typeDeDonnee);
 		this.setNbCasesRemplies(nbCasesRemplies);
 		this.setNbCasesVides(nbCasesVides);
 		this.setPourcentagesCasesRemplies((float)getNbCasesRemplies()/(float)nbLignesTotales*(float)100);
+		this.setValeursFrequentes(valeursFrequentes);
 	}
 	
 	public String toString(){
@@ -28,6 +31,17 @@ public class Colonne {
 		toString += "Pourcentage de cases remplies : " + this.getPourcentagesCasesRemplies() + "%";
 		
 		return toString;
+	}
+	
+	public String afficherValeursFrequentes(){
+		
+		String valeursFrequentes = "";
+		
+		for (int i = 0; i < 3; i ++){
+			valeursFrequentes += this.getValeursFrequentes()[i] + ";";
+		}
+		
+		return valeursFrequentes;
 	}
 
 	public String getNomColonne() {
@@ -69,6 +83,13 @@ public class Colonne {
 	public void setPourcentagesCasesRemplies(float pourcentagesCasesRemplies) {
 		this.pourcentagesCasesRemplies = pourcentagesCasesRemplies;
 	}
-	
+
+	public String[] getValeursFrequentes() {
+		return valeursFrequentes;
+	}
+
+	public void setValeursFrequentes(String[] valeursFrequentes) {
+		this.valeursFrequentes = valeursFrequentes;
+	}
 	
 }

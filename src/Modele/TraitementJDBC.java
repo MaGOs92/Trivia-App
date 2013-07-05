@@ -1,11 +1,16 @@
 package Modele;
 
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.mysql.jdbc.Connection;
 
@@ -116,10 +121,10 @@ public class TraitementJDBC {
 		return res;
 	}
 	
-	
-	public int nbLignesVides(String colonne) throws SQLException{
+	// Fonction qui renvoit le nombre de lignes vides pour le champ passé en paramètre
+	public int nbLignesVides(int index) throws SQLException{
 		
-		String sqlVarchar = "SELECT COUNT(" + colonne + ") FROM " + getNomTable() + " WHERE " + colonne + " = ?";
+		String sqlVarchar = "SELECT COUNT(" + this.getMetadata().getColumnName(index) + ") FROM " + getNomTable() + " WHERE " + this.getMetadata().getColumnName(index) + " = ?";
 		
 		PreparedStatement preparedStatement = getConnexion().prepareStatement(sqlVarchar);
 		
@@ -135,6 +140,59 @@ public class TraitementJDBC {
 		return nb;
 		
 	}
+	
+	// Fonction qui renvoit les 3 valeurs les plus fréquentes pour le champ passé en paramètre
+	public String[] valeursFrequentes(int index) throws SQLException{
+		
+		 String sql = "select " + this.getMetadata().getColumnName(index) + ", count(" + this.getMetadata().getColumnName(index) + ") as cnt ";
+				sql +=	"from " + getNomTable() + " ";
+				sql +=	"group by " + this.getMetadata().getColumnName(index) + " ";
+				sql += "having count(" + this.getMetadata().getColumnName(index) + ") > 1 ";
+				sql +=	"order by cnt desc";
+		
+		ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
+		
+		String [] valeursFrequentes = new String [3];
+		
+		int i = 0;
+		
+		if (this.getMetadata().getColumnTypeName(index) == "VARCHAR"){
+			
+			while(resultat.next() && i < 3){
+				if (resultat.getString(1).indexOf('\r') > 1){
+					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\r', ' ') + "\t number of entries : " + resultat.getInt(2);
+				}
+				if (resultat.getString(1).indexOf('\n') > 1){
+					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\n', ' ') + "\t number of entries : " + resultat.getInt(2);
+				}
+				if (resultat.getString(1).indexOf('\t') > 1){
+					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\t', ' ') + "\t number of entries : " + resultat.getInt(2);
+				}
+				if (resultat.getString(1).indexOf('\b') > 1){
+					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\b', ' ') + "\t number of entries : " + resultat.getInt(2);	
+				}
+				if (resultat.getString(1).indexOf('\f') > 1){
+					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\f', ' ') + "\t number of entries : " + resultat.getInt(2);
+				}
+				
+				valeursFrequentes[i] = "Value : " + resultat.getString(1) + "\t number of entries : " + resultat.getInt(2);
+				i++;
+				
+			}
+		}
+		
+		else{
+			
+			while(resultat.next() && i < 3){
+				valeursFrequentes[i] = "Value : " + resultat.getInt(1) + "\t number of entries : " + resultat.getInt(2);
+				i++;
+			}
+			
+		}
+		
+		return valeursFrequentes;
+				
+	}
 	/*
 	public int nbDoublons(){
 	
@@ -147,10 +205,11 @@ public class TraitementJDBC {
 		for (int i = 0; i < this.getNbColonnesTotales() ; i++)
 		{ 			
 			tabColonne [i] = new Colonne(this.getMetadata().getColumnName(i+1), 
-										this.getMetadata().getColumnClassName(i+1), 
-										this.getNbLignesTotales() - this.nbLignesVides(this.getMetadata().getColumnName(i+1)),
-										this.nbLignesVides(this.getMetadata().getColumnName(i+1)),
-										this.getNbLignesTotales());
+										this.getMetadata().getColumnTypeName(i+1), 
+										this.getNbLignesTotales() - this.nbLignesVides(i+1),
+										this.nbLignesVides(i+1),
+										this.getNbLignesTotales(),
+										this.valeursFrequentes(i+1));
 			
 		}
 		
@@ -158,12 +217,50 @@ public class TraitementJDBC {
 	
 	}
 	
-	public void dataAudit(){
+	public String[] dataAudit(){
 		
-		System.out.println("Data Audit Summar " + this.getNomTable() + ", Total number of Entries : " + this.getNbLignesTotales());
-		for (int i = 0; i < this.getTabColonne().length; i++){
-			System.out.println(getTabColonne()[i]);
+		String [] dataAudit = new String [this.getTabColonne().length + 2];
+		
+		dataAudit[0] = "Data Audit Summar " + this.getNomTable() + ", Total number of Entries : " + this.getNbLignesTotales();
+		dataAudit[1] = "Variable ; Storage ; Number of filled entries ; number of empty entries ; Total filled entries ; Frequent values";
+		for (int i = 2; i < this.getTabColonne().length + 2; i++){
+			dataAudit[i] = getTabColonne()[i-2].getNomColonne() + ";" + getTabColonne()[i-2].getTypeDeDonnee() + ";" + getTabColonne()[i-2].getNbCasesRemplies()
+					+ ";" + getTabColonne()[i-2].getNbCasesVides() + ";" + getTabColonne()[i-2].getPourcentagesCasesRemplies() + ";" + getTabColonne()[i-2].afficherValeursFrequentes();
 		}
+		
+		return dataAudit;
+	}
+	
+	public void genererFichierCSV(String[] dataAudit) throws IOException{
+		
+		CSVWriter writer = new CSVWriter(new FileWriter("C:\\Users\\guillaumefay\\Desktop\\gene.csv"));
+	     // feed in your array (or convert your data to an array)
+		for (int i = 0; i < this.getTabColonne().length + 2; i++){
+	     String[] entries = dataAudit[i].split(";");
+	     writer.writeNext(entries);
+		}
+		try {
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println(dataAudit[189].indexOf('\n'));
+		System.out.println(dataAudit[189].indexOf('\r'));
+		System.out.println(dataAudit[189].indexOf('\t'));
+		System.out.println(dataAudit[189].indexOf('\b'));
+		System.out.println(dataAudit[189].indexOf('\f'));
+		System.out.println(dataAudit[189].indexOf("\r\f"));
+		
+		System.out.println(dataAudit[189]);
+		
+		dataAudit[189].replace("\r\f", " ");
+		
+		System.out.println(dataAudit[189]);
+		
+		System.out.println("Generated CSV");
+		
 	}
 	
 }
