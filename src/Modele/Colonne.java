@@ -41,6 +41,7 @@ public class Colonne {
 			valeursFrequentes += this.getValeursFrequentes()[i] + ";";
 		}
 		
+		
 		return valeursFrequentes;
 	}
 

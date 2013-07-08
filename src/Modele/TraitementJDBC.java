@@ -1,7 +1,5 @@
 package Modele;
 
-
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -159,23 +157,8 @@ public class TraitementJDBC {
 		if (this.getMetadata().getColumnTypeName(index) == "VARCHAR"){
 			
 			while(resultat.next() && i < 3){
-				if (resultat.getString(1).indexOf('\r') > 1){
-					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\r', ' ') + "\t number of entries : " + resultat.getInt(2);
-				}
-				if (resultat.getString(1).indexOf('\n') > 1){
-					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\n', ' ') + "\t number of entries : " + resultat.getInt(2);
-				}
-				if (resultat.getString(1).indexOf('\t') > 1){
-					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\t', ' ') + "\t number of entries : " + resultat.getInt(2);
-				}
-				if (resultat.getString(1).indexOf('\b') > 1){
-					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\b', ' ') + "\t number of entries : " + resultat.getInt(2);	
-				}
-				if (resultat.getString(1).indexOf('\f') > 1){
-					valeursFrequentes[i] = "Value : " + resultat.getString(1).replace('\f', ' ') + "\t number of entries : " + resultat.getInt(2);
-				}
 				
-				valeursFrequentes[i] = "Value : " + resultat.getString(1) + "\t number of entries : " + resultat.getInt(2);
+				valeursFrequentes[i] = "Value : " + resultat.getString(1).replaceAll("\\W", "") + "\t number of entries : " + resultat.getInt(2);
 				i++;
 				
 			}
@@ -231,9 +214,15 @@ public class TraitementJDBC {
 		return dataAudit;
 	}
 	
-	public void genererFichierCSV(String[] dataAudit) throws IOException{
+	public void genererFichierCSV(String[] dataAudit, String chemin) throws IOException{
 		
-		CSVWriter writer = new CSVWriter(new FileWriter("C:\\Users\\guillaumefay\\Desktop\\gene.csv"));
+		String pref = "DataAudit_";
+		
+		chemin = chemin.substring(0, chemin.lastIndexOf("\\") + 1);
+		
+		chemin = chemin + pref + this.getNomTable() + ".csv";
+		
+		CSVWriter writer = new CSVWriter(new FileWriter(chemin));
 	     // feed in your array (or convert your data to an array)
 		for (int i = 0; i < this.getTabColonne().length + 2; i++){
 	     String[] entries = dataAudit[i].split(";");
@@ -246,20 +235,8 @@ public class TraitementJDBC {
 			e.printStackTrace();
 		}
 		
-		System.out.println(dataAudit[189].indexOf('\n'));
-		System.out.println(dataAudit[189].indexOf('\r'));
-		System.out.println(dataAudit[189].indexOf('\t'));
-		System.out.println(dataAudit[189].indexOf('\b'));
-		System.out.println(dataAudit[189].indexOf('\f'));
-		System.out.println(dataAudit[189].indexOf("\r\f"));
 		
-		System.out.println(dataAudit[189]);
-		
-		dataAudit[189].replace("\r\f", " ");
-		
-		System.out.println(dataAudit[189]);
-		
-		System.out.println("Generated CSV");
+		System.out.println("Fichier de data audit généré : " + chemin);
 		
 	}
 	

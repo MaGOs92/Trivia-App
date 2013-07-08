@@ -56,14 +56,10 @@ public class CSVtoSQL {
 	public static String nomDeLaTable(String fichierCSV){
 			
 		String nomTable = fichierCSV.substring(fichierCSV.lastIndexOf("\\") + 1, fichierCSV.indexOf('.'));
-
 		
-		if (nomTable.indexOf('-') != -1){nomTable.replace('-','_');}
-		if (nomTable.indexOf('?') != -1){nomTable.replace('?','_');}
-		if (nomTable.indexOf('(') != -1){nomTable.replace('(','_');}
-		if (nomTable.indexOf(')') != -1){nomTable.replace(')','_');}
+		nomTable = nomTable.replaceAll("\\W", "");
 		
-		System.out.println(nomTable);
+		System.out.println("Nom de la table : " + nomTable);
 		
 		return nomTable;
 	}
@@ -179,10 +175,10 @@ public class CSVtoSQL {
 		String champs ="";
 		
 		for (int i = 0; i < type.length; i ++)
-			if (i == 0){
+			/*if (i == 0){
 				champs += "ID INTEGER NOT NULL PRIMARY KEY, ";
-			}
-			else if (i == type.length - 1){
+			}*/
+			if (i == type.length - 1){
 				champs += nomTable[i] + " " + type[i];
 			}
 			else
@@ -206,17 +202,13 @@ public class CSVtoSQL {
 		  
 		  for (int i = 0 ; i < noms.length ; i++){
 			  			  
-				 if (noms[i].indexOf('-') != -1 || noms[i].indexOf('?') != -1 || noms[i].indexOf('(') != -1 || noms[i].indexOf(')') != -1 || noms[i].indexOf(' ') != -1 || noms[i].indexOf('#') != -1){
-					  noms[i] = noms[i].replace('-','_');
-					  noms[i] = noms[i].replace('?','_');
-					  noms[i] = noms[i].replace('(','_');
-					  noms[i] = noms[i].replace(')','_');
-					  noms[i] = noms[i].replace(' ', '_');
-					  noms[i] = noms[i].replace('#', '_');
-				 }
+				noms[i] = noms[i].replaceAll("\\W","");
+				
 				 if (noms[i].length() > 60){
 					  noms[i] = noms[i].substring(0, 40);
 				  }
+				 
+				 noms[i] += "_" + i;
 
 		  }		  
 		   
@@ -251,7 +243,9 @@ public class CSVtoSQL {
 		
 		String requeteCreationTable = "CREATE TABLE "+ nomTable +"(";
 		requeteCreationTable += champs;
-		requeteCreationTable += ")";		
+		requeteCreationTable += ")";
+		
+		System.out.println(requeteCreationTable);
 		
 		try{
 			PreparedStatement StatementCreate = co.prepareStatement(requeteCreationTable);
@@ -292,7 +286,28 @@ public class CSVtoSQL {
 		
 		System.out.println("Le fichier a été importé dans la table " + nomTable + ".");
 	}
-	// C:\Users\guillaumefay\Desktop\cest.csv
+	
+	public static void ajoutID(String nomTable, Connection co){
+		
+		String reqID = "ALTER TABLE " + nomTable + " ADD ID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST";
+		
+		try {
+			Statement ajoutID = co.prepareStatement(reqID);
+			
+			ajoutID.execute(reqID);
+		}
+		
+		catch(SQLException e) {
+			System.out.println("Le fichier n'a pas été importé.");
+			e.printStackTrace();
+			return;
+		}
+		
+		System.out.println("Une clef primaire a été ajoutée.");
+	}
+	
+	
+	// C:\Users\guillaumefay\Desktop\CSV\tudla.csv
 	public static void main (String[] args) throws IOException{
 
 		ConnexionJDBC main = new ConnexionJDBC("localhost:3306/dbtriviacsv", "root", "root");
@@ -309,9 +324,11 @@ public class CSVtoSQL {
 		
 		loadFichierCSV(co,nomTable, chemin);
 		
+		ajoutID(nomTable, co);
+		
 		try {
 			TraitementJDBC traitement = new TraitementJDBC(co, nomTable);
-			traitement.genererFichierCSV(traitement.dataAudit());
+			traitement.genererFichierCSV(traitement.dataAudit(), chemin);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
