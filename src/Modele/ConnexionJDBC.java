@@ -7,7 +7,11 @@ import com.mysql.jdbc.*;
 
 public class ConnexionJDBC {
 
-	private String url;
+	private String server;
+	
+	private String port;
+	
+	private String database;
 	
 	private String user;
 	
@@ -17,23 +21,40 @@ public class ConnexionJDBC {
 
 	}
 	
-	ConnexionJDBC(String url, String user, String password){
+	public ConnexionJDBC(String server, String port, String database, String user, String password){
 		
-		this.url = url;
+		this.server = server;
+		this.port = port;
+		this.database = database;
 		this.user = user;
 		this.password = password;
 	}
 	
 	
-	public String getUrl() {
-		return url;
+
+	public String getServer() {
+		return server;
 	}
 
-
-	public void setUrl(String url) {
-		this.url = url;
+	public void setServer(String server) {
+		this.server = server;
 	}
 
+	public String getPort() {
+		return port;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+	public String getDatabase() {
+		return database;
+	}
+
+	public void setDatabase(String database) {
+		this.database = database;
+	}
 
 	public String getUser() {
 		return user;
@@ -69,7 +90,7 @@ public class ConnexionJDBC {
 		
 	 
 		try {
-			connection = (Connection)  DriverManager.getConnection("jdbc:mysql://" + this.getUrl(), this.getUser(), this.getPassword());
+			connection = (Connection)  DriverManager.getConnection("jdbc:mysql://" + this.getServer() + ":" + this.getPort() + "/" + this.getDatabase(), this.getUser(), this.getPassword());
 	 
 		} catch (SQLException e) {
 			System.out.println("Connection échouée, vérifier les paramètres de connection à la base de donnée.");

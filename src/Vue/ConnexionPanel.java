@@ -1,59 +1,287 @@
 package Vue;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.*;
 
-import Modele.CSVtoSQL;
 import Modele.ConnexionJDBC;
 
-public class ConnexionPanel extends JPanel {
+public class ConnexionPanel extends JPanel implements ActionListener {
+	
+	private static final long serialVersionUID = 1L;
+	
+	JLabel LServer;
+	JTextField TServer;
+	JLabel LPort;
+	JTextField TPort;
+	JLabel LDB;
+	JTextField TDB;
+	JLabel LUser;
+	JTextField TUser;
+	JLabel LPassword;
+	JPasswordField TPassword;
+	
+	ConnexionJDBC modele = null;
+	
+	Connection co = null;
+	
+	JButton connexion;
+	
+	JButton next;
+	
+	JLabel info;
+	
+	boolean importation;
 	
 	
+	
+	public boolean isImportation() {
+		return importation;
+	}
+
+	public void setImportation(boolean importation) {
+		this.importation = importation;
+	}
+
+	public JButton getNext() {
+		return next;
+	}
+
+	public void setNext(JButton next) {
+		this.next = next;
+	}
+
+	public Connection getCo() {
+		return co;
+	}
+
+	public void setCo(Connection co) {
+		this.co = co;
+	}
+
+	public ConnexionJDBC getModele() {
+		return modele;
+	}
+
+	public void setModele(ConnexionJDBC modele) {
+		this.modele = modele;
+	}
+
+	public JLabel getInfo() {
+		return info;
+	}
+
+	public void setInfo(JLabel info) {
+		this.info = info;
+	}
+
+	public JLabel getLServer() {
+		return LServer;
+	}
+
+	public void setLServer(JLabel lServer) {
+		LServer = lServer;
+	}
+
+	public JTextField getTServer() {
+		return TServer;
+	}
+
+	public void setTServer(JTextField tServer) {
+		TServer = tServer;
+	}
+
+	public JLabel getLPort() {
+		return LPort;
+	}
+
+	public void setLPort(JLabel lPort) {
+		LPort = lPort;
+	}
+
+	public JTextField getTPort() {
+		return TPort;
+	}
+
+	public void setTPort(JTextField tPort) {
+		TPort = tPort;
+	}
+
+	public JLabel getLDB() {
+		return LDB;
+	}
+
+	public void setLDB(JLabel lDB) {
+		LDB = lDB;
+	}
+
+	public JTextField getTDB() {
+		return TDB;
+	}
+
+	public void setTDB(JTextField tDB) {
+		TDB = tDB;
+	}
+
+	public JLabel getLUser() {
+		return LUser;
+	}
+
+	public void setLUser(JLabel lUser) {
+		LUser = lUser;
+	}
+
+	public JTextField getTUser() {
+		return TUser;
+	}
+
+	public void setTUser(JTextField tUser) {
+		TUser = tUser;
+	}
+
+	public JLabel getLPassword() {
+		return LPassword;
+	}
+
+	public void setLPassword(JLabel lPassword) {
+		LPassword = lPassword;
+	}
+
+	public JPasswordField getTPassword() {
+		return TPassword;
+	}
+
+	public void setTPassword(JPasswordField tPassword) {
+		TPassword = tPassword;
+	}
+
+	public JButton getConnexion() {
+		return connexion;
+	}
+
+	public void setConnexion(JButton connexion) {
+		this.connexion = connexion;
+	}
+
 	ConnexionPanel(){
 		
 		setLayout(new BorderLayout());
 		
 		String[] labels = {"Server : ", "Port : ", "Database : ", "User : ", "Password : "};
 		int numPairs = labels.length;
+		
+		this.setImportation(false);
 
 		//Create and populate the panel.
 		JPanel champs = new JPanel(new SpringLayout());
-		for (int i = 0; i < numPairs; i++) {
-		    JLabel l = new JLabel(labels[i], JLabel.TRAILING);
-		    champs.add(l);
-		    if (i != numPairs-1){
-		    	JTextField textField = new JTextField(20);
-		    	l.setLabelFor(textField);
-		    	champs.add(textField);
-		    }
-		    else{
-		    	JPasswordField passField = new JPasswordField(20);
-		    	l.setLabelFor(passField);
-		    	champs.add(passField);
-		    }
-		}
-
+		// Champ server
+		LServer = new JLabel(labels[0], JLabel.TRAILING);
+		champs.add(LServer);
+		TServer = new JTextField(20);
+		LServer.setLabelFor(TServer);
+		champs.add(TServer);
+		TServer.setText("localhost");
+		
+		// Champ port
+		LPort = new JLabel(labels[1], JLabel.TRAILING);
+		champs.add(LPort);
+		TPort = new JTextField(20);
+		LPort.setLabelFor(TPort);
+		champs.add(TPort);
+		TPort.setText("3306");
+		
+		// Champ database
+		LDB = new JLabel(labels[2], JLabel.TRAILING);
+		champs.add(LDB);
+		TDB = new JTextField(20);
+		LDB.setLabelFor(TDB);
+		champs.add(TDB);
+		TDB.setText("dbtriviacsv");
+		
+		// Champ user
+		LUser = new JLabel(labels[3], JLabel.TRAILING);
+		champs.add(LUser);
+		TUser = new JTextField(20);
+		LUser.setLabelFor(TUser);
+		champs.add(TUser);
+		TUser.setText("root");
+		
+		// Champs password
+		LPassword = new JLabel(labels[4], JLabel.TRAILING);
+		champs.add(LPassword);
+		TPassword = new JPasswordField(20);
+		LPassword.setLabelFor(TPassword);
+		champs.add(TPassword);
+		
 		//Lay out the panel.
 		SpringUtilities.makeCompactGrid(champs,
 		                                numPairs, 2, //rows, cols
 		                                6, 6,        //initX, initY
 		                                6, 6);       //xPad, yPad
+		
+		//champs.setBorder(BorderFactory.createLineBorder(Color.black)); Pour ajouter une bordure
+		
 		// Ajout des champs
-		this.add(champs, BorderLayout.NORTH);
+		
+		JPanel inf = new JPanel();
+		inf.setLayout(new FlowLayout());
+		
+		this.setInfo(new JLabel("Please enter your login information."));
+		inf.add(getInfo());
+		
+		this.add(inf, BorderLayout.NORTH);
+		
+		this.add(champs, BorderLayout.CENTER);
 		
 		
-		// Boutton de connexion
+		// Panel de connexion
 		JPanel panelConnexion = new JPanel();
 
-		JButton connexion = new JButton("Connexion");
+		this.setConnexion(new JButton("Test connection"));
+		this.setNext(new JButton("Next >"));
+		this.getNext().setEnabled(false);
 		panelConnexion.setLayout(new FlowLayout());
-		panelConnexion.add(connexion);
+		panelConnexion.add(getConnexion());
+		panelConnexion.add(getNext());
+		
+		// Créer un écouteur		
+		
+		getConnexion().addActionListener(this);
+		
+		getNext().addActionListener(this);
 		
 		this.add(panelConnexion, BorderLayout.SOUTH);
 		
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		
+		if (e.getSource() == this.getConnexion() ){
+
+        	this.setModele(new ConnexionJDBC(this.getTServer().getText(), this.getTPort().getText(), this.getTDB().getText(), this.getTUser().getText(), new String (this.getTPassword().getPassword())));
+
+        	if (getModele().openConnection() != null){
+        		this.setCo(getModele().openConnection());
+        		this.getInfo().setForeground(Color.blue);
+        		this.getInfo().setText("Connected to mySQL Server.");
+        		this.getNext().setEnabled(true);
+        	}
+        	else{
+        		getInfo().setForeground(Color.red);
+        		this.getInfo().setText("Connection failed. Please check your login information.");
+        	}
+        	
+		}
+		
+		if (e.getSource() == this.getNext() ){
+			this.setImportation(true);
+		}
+		 
 	}
 	
 	public static void main (String[] args){
@@ -61,39 +289,24 @@ public class ConnexionPanel extends JPanel {
 		// Création de la fenetre
 		
 		JFrame fenetre = new JFrame ("DataAudit");
-		fenetre .setSize(500, 230);
+		fenetre.setSize(500, 230);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetre.setTitle("DataAudit");
 		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
 		
-		
+		// Première vue : connexion
 		ConnexionPanel DA = new ConnexionPanel();
-		
-		
 		fenetre.getContentPane().add(DA);
-		
 		fenetre.setVisible(true);
+		
+		// Deuxième vue : importation
+		if (DA.isImportation()){
+		fenetre.getContentPane().remove(DA);
+		
+		ImportationPanel IP = new ImportationPanel();
+		fenetre.getContentPane().add(IP);
+		}
+		
 	}
 }
-/*
-class EcouteurConnexion implements ActionListener {
-	
-	ConnexionJDBC modele;
-	
-	EcouteurBouton(JLabel affichage, ModeleCalculatriceEntier modele){
-		this.affichage = affichage;
-		this.modele = modele;
-	}
-	
-	 public void actionPerformed(ActionEvent e) {
-		 // Si c'est un bouton, rajouter son nom
-         if (e.getSource() instanceof JButton){
-        	 JButton boutonSource = (JButton) e.getSource();
-        	 modele.toucheEntree(convert(boutonSource.getText()));
-        	 
-        	 affichage.setText("" + modele.getValeur());
-        	 
-         }
-     } 
-*/	 
-	
+

@@ -309,8 +309,8 @@ public class CSVtoSQL {
 	
 	// C:\Users\guillaumefay\Desktop\CSV\tudla.csv
 	public static void main (String[] args) throws IOException{
-
-		ConnexionJDBC main = new ConnexionJDBC("localhost:3306/dbtriviacsv", "root", "root");
+		
+		ConnexionJDBC main = new ConnexionJDBC("localhost", "3306", "dbtriviacsv", "root", "root");
 		
 		Connection co = main.openConnection();
 		
