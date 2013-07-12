@@ -14,7 +14,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import com.mysql.jdbc.Connection;
 
-public class CSVtoSQL {
+public class ImportationModele {
 	
 	// Fonction qui renvoit le chemin du fichier CSV à importer
 	public static String cheminDuCSV(){
@@ -310,7 +310,7 @@ public class CSVtoSQL {
 	// C:\Users\guillaumefay\Desktop\CSV\tudla.csv
 	public static void main (String[] args) throws IOException{
 		
-		ConnexionJDBC main = new ConnexionJDBC("localhost", "3306", "dbtriviacsv", "root", "root");
+		ConnexionModele main = new ConnexionModele("localhost", "3306", "dbtriviacsv", "root", "root");
 		
 		Connection co = main.openConnection();
 		
@@ -327,7 +327,7 @@ public class CSVtoSQL {
 		ajoutID(nomTable, co);
 		
 		try {
-			TraitementJDBC traitement = new TraitementJDBC(co, nomTable);
+			DataAuditModele traitement = new DataAuditModele(co, nomTable);
 			traitement.genererFichierCSV(traitement.dataAudit(), chemin);
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -5,15 +5,18 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
+import com.mysql.jdbc.Connection;
 
 import javax.swing.*;
 
-import Modele.ConnexionJDBC;
+import Controleur.CoImpControleur;
+import Modele.ConnexionModele;
 
 public class ConnexionPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1L;
+	
+	CoImpControleur controleur = null;
 	
 	JLabel LServer;
 	JTextField TServer;
@@ -26,7 +29,7 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 	JLabel LPassword;
 	JPasswordField TPassword;
 	
-	ConnexionJDBC modele = null;
+	ConnexionModele modele = null;
 	
 	Connection co = null;
 	
@@ -36,16 +39,14 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 	
 	JLabel info;
 	
-	boolean importation;
 	
-	
-	
-	public boolean isImportation() {
-		return importation;
+
+	public CoImpControleur getControleur() {
+		return controleur;
 	}
 
-	public void setImportation(boolean importation) {
-		this.importation = importation;
+	public void setControleur(CoImpControleur controleur) {
+		this.controleur = controleur;
 	}
 
 	public JButton getNext() {
@@ -64,11 +65,11 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 		this.co = co;
 	}
 
-	public ConnexionJDBC getModele() {
+	public ConnexionModele getModele() {
 		return modele;
 	}
 
-	public void setModele(ConnexionJDBC modele) {
+	public void setModele(ConnexionModele modele) {
 		this.modele = modele;
 	}
 
@@ -168,14 +169,14 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 		this.connexion = connexion;
 	}
 
-	ConnexionPanel(){
+	public ConnexionPanel(CoImpControleur controleur){
+		
+		this.controleur = controleur;
 		
 		setLayout(new BorderLayout());
 		
 		String[] labels = {"Server : ", "Port : ", "Database : ", "User : ", "Password : "};
 		int numPairs = labels.length;
-		
-		this.setImportation(false);
 
 		//Create and populate the panel.
 		JPanel champs = new JPanel(new SpringLayout());
@@ -263,7 +264,7 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 		
 		if (e.getSource() == this.getConnexion() ){
 
-        	this.setModele(new ConnexionJDBC(this.getTServer().getText(), this.getTPort().getText(), this.getTDB().getText(), this.getTUser().getText(), new String (this.getTPassword().getPassword())));
+        	this.setModele(new ConnexionModele(this.getTServer().getText(), this.getTPort().getText(), this.getTDB().getText(), this.getTUser().getText(), new String (this.getTPassword().getPassword())));
 
         	if (getModele().openConnection() != null){
         		this.setCo(getModele().openConnection());
@@ -279,33 +280,15 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 		}
 		
 		if (e.getSource() == this.getNext() ){
-			this.setImportation(true);
+			this.getControleur().showImp();
 		}
 		 
 	}
 	
 	public static void main (String[] args){
 		
-		// Création de la fenetre
+		CoImpControleur CoController = new CoImpControleur();
 		
-		JFrame fenetre = new JFrame ("DataAudit");
-		fenetre.setSize(500, 230);
-		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fenetre.setTitle("DataAudit");
-		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
-		
-		// Première vue : connexion
-		ConnexionPanel DA = new ConnexionPanel();
-		fenetre.getContentPane().add(DA);
-		fenetre.setVisible(true);
-		
-		// Deuxième vue : importation
-		if (DA.isImportation()){
-		fenetre.getContentPane().remove(DA);
-		
-		ImportationPanel IP = new ImportationPanel();
-		fenetre.getContentPane().add(IP);
-		}
 		
 	}
 }

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import com.mysql.jdbc.*;
 
-public class ConnexionJDBC {
+public class ConnexionModele {
 
 	private String server;
 	
@@ -17,11 +17,11 @@ public class ConnexionJDBC {
 	
 	private String password;
 	
-	ConnexionJDBC(){
-
+	ConnexionModele(){
+		
 	}
 	
-	public ConnexionJDBC(String server, String port, String database, String user, String password){
+	public ConnexionModele(String server, String port, String database, String user, String password){
 		
 		this.server = server;
 		this.port = port;

@@ -13,7 +13,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.mysql.jdbc.Connection;
 
 
-public class TraitementJDBC {
+public class DataAuditModele {
 	
 	private Connection connexion;
 	
@@ -76,7 +76,7 @@ public class TraitementJDBC {
 		this.nbColonnesTotales = nbColonnesTotales;
 	}
 
-	TraitementJDBC(Connection co, String nomTable) throws SQLException{
+	public DataAuditModele(Connection co, String nomTable) throws SQLException{
 		
 		this.setConnexion(co);
 		

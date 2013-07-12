@@ -4,11 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.IOException;
+
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.filechooser.FileFilter;
+
+import Controleur.CoImpControleur;
 
 public class ImportationPanel extends JPanel implements ActionListener {
 
@@ -20,9 +24,17 @@ public class ImportationPanel extends JPanel implements ActionListener {
 	JLabel fichier;
 	String pathFichier;
 	FileFilter filtre;
+	CoImpControleur controller;
+		
 	
-	
-	
+	public CoImpControleur getController() {
+		return controller;
+	}
+
+	public void setController(CoImpControleur controller) {
+		this.controller = controller;
+	}
+
 	public FileFilter getFiltre() {
 		return filtre;
 	}
@@ -71,7 +83,9 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		this.info = info;
 	}
 
-	ImportationPanel(){		
+	public ImportationPanel(CoImpControleur controller){		
+		
+		this.setController(controller);
 		
 		this.setLayout(new BorderLayout());
 		
@@ -96,11 +110,14 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		
 		this.setFichier(new JLabel("Selected File : none"));
 		fic.add(getFichier());
+		
 
 		this.add(importer, BorderLayout.NORTH);
 		this.add(dataAudit, BorderLayout.SOUTH);
 		this.add(fic, BorderLayout.CENTER);
 	}
+	
+
 	
 	 public void actionPerformed(ActionEvent ae) {
 		 
@@ -131,8 +148,12 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		 }
 		 
 		 if (ae.getSource() == getDataAudit()){
-			 
-			 
+			try {
+				getController().lancerDataAudit();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 		 }
 	 }
 	 
@@ -146,7 +167,7 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		
-		ImportationPanel IP = new ImportationPanel();
+		ImportationPanel IP = new ImportationPanel(new CoImpControleur());
 		
 		
 		fenetre.getContentPane().add(IP);
@@ -154,4 +175,5 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		fenetre.pack();
 		fenetre.setVisible(true);
 	}
+	
 }
