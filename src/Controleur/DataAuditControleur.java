@@ -14,9 +14,16 @@ public class DataAuditControleur {
 	JFrame fenetre;
 	DataAuditPanel DAPanel;
 	DataAuditModele DAModele;
+	String pathFichier;
 	
-	
-	
+	public String getPathFichier() {
+		return pathFichier;
+	}
+
+	public void setPathFichier(String pathFichier) {
+		this.pathFichier = pathFichier;
+	}
+
 	public Connection getCo() {
 		return co;
 	}
@@ -49,11 +56,13 @@ public class DataAuditControleur {
 		DAModele = dAModele;
 	}
 
-	DataAuditControleur(Connection co, DataAuditModele DAModele){
+	DataAuditControleur(Connection co, DataAuditModele DAModele, String pathFichier){
 		
 		this.setCo(co);
 		
 		this.setDAModele(DAModele);
+		
+		this.setPathFichier(pathFichier);
 		
 		this.setFenetre(this.creerFenetre());
 		
@@ -78,5 +87,4 @@ public class DataAuditControleur {
 		return fenetre;
 
 	}
-
 }

@@ -3,9 +3,8 @@ package Controleur;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
-import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
 
 import Modele.DataAuditModele;
 import Modele.ImportationModele;
@@ -42,18 +41,31 @@ public class CoImpControleur {
 	public void setTraitement(DataAuditModele traitement) {
 		this.traitement = traitement;
 	}
+	
+	 public static void setBestLookAndFeelAvailable(){
+		   String system_lf = UIManager.getSystemLookAndFeelClassName().toLowerCase();
+		   if(system_lf.contains("metal")){
+		       try {
+		           UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+		       }catch (Exception e) {}
+		   }else{
+		       try {
+		           UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		       }catch (Exception e) {}
+		   }
+		 }
+	
 	public JFrame creerFenetre()
 	{	
 		// Création de la fenetre
 		
+		setBestLookAndFeelAvailable();
+	     
 		JFrame fenetre = new JFrame ("DataAudit");
 		fenetre.setSize(500, 230);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetre.setTitle("DataAudit");
 		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
-		
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JDialog.setDefaultLookAndFeelDecorated(true);
 	
 		fenetre.setVisible(true);
 		
@@ -106,7 +118,7 @@ public class CoImpControleur {
 			
 			getFenetre().setVisible(false);
 			
-			DataAuditControleur controller = new DataAuditControleur(this.getCoPanel().getCo(), this.getTraitement());
+			DataAuditControleur controller = new DataAuditControleur(this.getCoPanel().getCo(), this.getTraitement(), this.getImpPanel().getPathFichier());
 					
 		}
 	}  

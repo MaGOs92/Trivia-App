@@ -1,10 +1,16 @@
 package Modele;
 
 public class Colonne {
+	
+	private boolean selectionnee;
+	
+	private Mapping mapping;
 
 	private String nomColonne;
 	
 	private String typeDeDonnee;
+	
+	private int nbCasesIncorrectes;
 	
 	private int nbCasesRemplies;
 	
@@ -19,17 +25,14 @@ public class Colonne {
 		this.setTypeDeDonnee(typeDeDonnee);
 		this.setNbCasesRemplies(nbCasesRemplies);
 		this.setNbCasesVides(nbCasesVides);
-		this.setPourcentagesCasesRemplies((float)getNbCasesRemplies()/(float)nbLignesTotales*(float)100);
+		this.setPourcentagesCasesRemplies(((float)getNbCasesRemplies()-(float)getNbCasesIncorrectes())/(float)nbLignesTotales*(float)100);
 		this.setValeursFrequentes(valeursFrequentes);
+		this.setSelectionnee(false);
+		this.setMapping(new Mapping(0, "None", ""));
 	}
 	
 	public String toString(){
-		String toString = this.getNomColonne() + " : ";
-		toString += "Type de données : " + this.getTypeDeDonnee() + ", ";
-		toString += "Nombre de cases remplies : " + this.getNbCasesRemplies() + ", ";
-		toString += "Nombre de cases vides : " + this.getNbCasesVides() + ", ";
-		toString += "Pourcentage de cases remplies : " + this.getPourcentagesCasesRemplies() + "%";
-		
+		String toString = this.getNomColonne();	
 		return toString;
 	}
 	
@@ -43,6 +46,31 @@ public class Colonne {
 		
 		
 		return valeursFrequentes;
+	}
+
+	
+	public Mapping getMapping() {
+		return mapping;
+	}
+
+	public void setMapping(Mapping mapping) {
+		this.mapping = mapping;
+	}
+
+	public int getNbCasesIncorrectes() {
+		return nbCasesIncorrectes;
+	}
+
+	public void setNbCasesIncorrectes(int nbCasesIncorrectes) {
+		this.nbCasesIncorrectes = nbCasesIncorrectes;
+	}
+
+	public boolean isSelectionnee() {
+		return selectionnee;
+	}
+
+	public void setSelectionnee(boolean selectionnee) {
+		this.selectionnee = selectionnee;
 	}
 
 	public String getNomColonne() {

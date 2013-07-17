@@ -27,7 +27,19 @@ public class DataAuditModele {
 	
 	private Colonne[] tabColonne;
 	
+	private Mapping[] tabMapping;
 	
+	
+	
+	
+	public Mapping[] getTabMapping() {
+		return tabMapping;
+	}
+
+	public void setTabMapping(Mapping[] tabMapping) {
+		this.tabMapping = tabMapping;
+	}
+
 	public Colonne[] getTabColonne() {
 		return tabColonne;
 	}
@@ -95,6 +107,8 @@ public class DataAuditModele {
 		this.setNbLignesTotales(resultat.getRow());
 		
 		this.setTabColonne(this.remplissageColonne());
+		
+		this.setTabMapping(this.tabMapping());
 
 	}
 	
@@ -176,11 +190,7 @@ public class DataAuditModele {
 		return valeursFrequentes;
 				
 	}
-	/*
-	public int nbDoublons(){
 	
-	}
-	*/
 	public Colonne[] remplissageColonne() throws SQLException{
 		
 		Colonne [] tabColonne = new Colonne [getNbColonnesTotales()];
@@ -198,6 +208,32 @@ public class DataAuditModele {
 		
 		return tabColonne;
 	
+	}
+	
+	public int getNbLignesSelectionnee(){
+		int i = 0;
+		for (i = 0; i < this.getNbColonnesTotales(); i ++){
+			if (tabColonne[i].isSelectionnee())
+				i++;
+		}
+		return i;
+	}
+	
+	public Mapping[] tabMapping(){
+		
+		String[] nomMapping = {"None", "ID", "Country", "Company name", "Physical address L1", "Physical address L2", "Physical address L3",
+			"Physical city", "Physical state", "Zip postal code", "Phone number", "Website", "Industry code (Sic4)", "Industry code (NAICS6)", "Industry code (NAF)",
+			"Industry code (APE)", "Descr. Industry code", "Employee at site", "Employee total", "Annual sales", "ID contact", "Title", "Contact first name",
+			"Contact last name", "Contact phone", "Contact email", "Internal marketability indicator", "Opt/Out flag"
+		};
+		
+		Mapping[] tabMapping = new Mapping[nomMapping.length];
+		
+		for (int i = 0; i < nomMapping.length; i ++){
+			tabMapping[i] = new Mapping(i, nomMapping[i], "");
+		}
+
+		return tabMapping;
 	}
 	
 	public String[] dataAudit(){
