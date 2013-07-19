@@ -6,8 +6,9 @@ public class Mapping {
 
 	private String nom;
 	
-	private String regex;
-	
+	public Mapping(){
+		
+	}
 	
 
 	public int getId() {
@@ -23,16 +24,7 @@ public class Mapping {
 	public String getNom() {
 		return nom;
 	}
-	
 
-	public String getRegex() {
-		return regex;
-	}
-
-
-	public void setRegex(String regex) {
-		this.regex = regex;
-	}
 
 
 	public void setNom(String nom) {
@@ -48,10 +40,9 @@ public class Mapping {
 	}
 
 
-	Mapping(int id, String nom, String regex){
+	Mapping(int id, String nom){
 		this.setId(id);
 		this.setNom(nom);
-		this.setRegex(regex);
 	}
 
 	

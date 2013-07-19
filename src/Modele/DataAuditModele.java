@@ -197,7 +197,8 @@ public class DataAuditModele {
 		
 		for (int i = 0; i < this.getNbColonnesTotales() ; i++)
 		{ 			
-			tabColonne [i] = new Colonne(this.getMetadata().getColumnName(i+1), 
+			tabColonne [i] = new Colonne(i + 1,
+										this.getMetadata().getColumnName(i+1), 
 										this.getMetadata().getColumnTypeName(i+1), 
 										this.getNbLignesTotales() - this.nbLignesVides(i+1),
 										this.nbLignesVides(i+1),
@@ -211,12 +212,12 @@ public class DataAuditModele {
 	}
 	
 	public int getNbLignesSelectionnee(){
-		int i = 0;
-		for (i = 0; i < this.getNbColonnesTotales(); i ++){
-			if (tabColonne[i].isSelectionnee())
-				i++;
+		int j = 0;
+		for (int i = 0; i < this.getNbColonnesTotales(); i ++){
+			if (this.getTabColonne()[i].isSelectionnee())
+				j++;
 		}
-		return i;
+		return j;
 	}
 	
 	public Mapping[] tabMapping(){
@@ -230,7 +231,7 @@ public class DataAuditModele {
 		Mapping[] tabMapping = new Mapping[nomMapping.length];
 		
 		for (int i = 0; i < nomMapping.length; i ++){
-			tabMapping[i] = new Mapping(i, nomMapping[i], "");
+			tabMapping[i] = new Mapping(i, nomMapping[i]);
 		}
 
 		return tabMapping;

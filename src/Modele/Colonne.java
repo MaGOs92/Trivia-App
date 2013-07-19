@@ -4,6 +4,8 @@ public class Colonne {
 	
 	private boolean selectionnee;
 	
+	private int id;
+	
 	private Mapping mapping;
 
 	private String nomColonne;
@@ -20,7 +22,8 @@ public class Colonne {
 	
 	private String[] valeursFrequentes;
 	
-	Colonne(String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes){
+	Colonne(int id, String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes){
+		this.setId(id);
 		this.setNomColonne(nomColonne);
 		this.setTypeDeDonnee(typeDeDonnee);
 		this.setNbCasesRemplies(nbCasesRemplies);
@@ -28,7 +31,7 @@ public class Colonne {
 		this.setPourcentagesCasesRemplies(((float)getNbCasesRemplies()-(float)getNbCasesIncorrectes())/(float)nbLignesTotales*(float)100);
 		this.setValeursFrequentes(valeursFrequentes);
 		this.setSelectionnee(false);
-		this.setMapping(new Mapping(0, "None", ""));
+		this.setMapping(new Mapping(0, "None"));
 	}
 	
 	public String toString(){
@@ -49,6 +52,15 @@ public class Colonne {
 	}
 
 	
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public Mapping getMapping() {
 		return mapping;
 	}

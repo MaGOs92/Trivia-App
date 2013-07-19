@@ -24,7 +24,7 @@ import Modele.DataAuditModele;
 import Modele.Mapping;
 
 
-public class DataAuditPanel extends JPanel implements ActionListener, ListSelectionListener {
+public class DataAuditPanel extends JPanel {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -388,7 +388,8 @@ public class DataAuditPanel extends JPanel implements ActionListener, ListSelect
 		listeColonne.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listeColonne.setLayoutOrientation(JList.VERTICAL);
 		listeColonne.setVisibleRowCount(-1);
-		listeColonne.addListSelectionListener(this);
+		listeColonne.setSelectedIndex(0);
+		listeColonne.addListSelectionListener(new EcouteurListe(this));
 		
 		
 		JScrollPane listScroller = new JScrollPane(listeColonne);
@@ -419,14 +420,13 @@ public class DataAuditPanel extends JPanel implements ActionListener, ListSelect
 		CBMapping.setLayoutOrientation(JList.VERTICAL);
 		CBMapping.setVisibleRowCount(-1);
 		LMapping.setLabelFor(CBMapping);
-		CBMapping.addListSelectionListener(this);
+		CBMapping.addListSelectionListener(new EcouteurListe(this));
 		JScrollPane listScroller2 = new JScrollPane(CBMapping);
 		listScroller2.setPreferredSize(new Dimension(150, 300));
 		JPanel containerMapList = new JPanel(new FlowLayout());
 		containerMapList.add(LMapping);
 		panelMapping2.add(containerMapList, BorderLayout.NORTH);
 		panelMapping2.add(listScroller2, BorderLayout.CENTER);
-		
 		
 		lValue = new JLabel("Value :", JLabel.TRAILING);
 		panelMapping.add(lValue);
@@ -468,24 +468,28 @@ public class DataAuditPanel extends JPanel implements ActionListener, ListSelect
 		panelMapping.add(lSelectValue);
 		selectValue = new JCheckBox();
 		lSelectValue.setLabelFor(selectValue);
-		selectValue.addActionListener(this);
+		selectValue.addActionListener(new EcouteurCB(this));
 		panelMapping.add(selectValue);
 		
 		// Valeurs fréquentes
-		/*
+		
 		valeursfrequentes = new JPanel(new BorderLayout());
 		VFLabelContainer = new JPanel(new FlowLayout());
 		lvaleursfrequentes = new JLabel("Frequent values : ");
 		VFLabelContainer.add(lvaleursfrequentes);
+
 		
-		listVF = new JList<String>(listeColonne.); //data has type Object[]
-		listVF.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listVF = new JList<String>(this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursFrequentes()); //data has type Object[]
+		listVF.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listVF.setLayoutOrientation(JList.VERTICAL);
 		listVF.setVisibleRowCount(-1);
-		listVF.addListSelectionListener(this);
+		listVF.addListSelectionListener(new EcouteurListe(this));
 		
-		valeursfrequentes.add(VFLabelContainer);
-		*/
+		JScrollPane ScrollerVF = new JScrollPane(listVF);
+		listScroller.setPreferredSize(new Dimension(50, 50));
+
+		valeursfrequentes.add(VFLabelContainer, BorderLayout.NORTH);
+		valeursfrequentes.add(ScrollerVF, BorderLayout.CENTER);
 		
 		//Lay out the panel.
 		SpringUtilities.makeCompactGrid(panelMapping,
@@ -494,22 +498,27 @@ public class DataAuditPanel extends JPanel implements ActionListener, ListSelect
 		                                10, 10);       //xPad, yPad
 		
 		
+		JPanel panelContainer = new JPanel(new BorderLayout());
+		panelContainer.add(panelMapping, BorderLayout.CENTER);
+		panelContainer.add(valeursfrequentes, BorderLayout.SOUTH);
+		
 		// Construction du JPanel repporting
 		
-		JPanel pRepporting = new JPanel();
-		JButton repporting = new JButton("Edit Repporting");
-		JButton selectAll = new JButton("Select all");
-		JButton deselectAll = new JButton("Deselect all");
+		pRepporting = new JPanel();
+		repporting = new JButton("Edit Repporting");
+		selectAll = new JButton("Select all");
+		deselectAll = new JButton("Deselect all");
 		
 		
 		pRepporting.setLayout(new FlowLayout());
-		selectAll.addActionListener(this);
+		selectAll.addActionListener(new EcouteurBouton(this));
 		pRepporting.add(selectAll);
 		
-		deselectAll.addActionListener(this);
+		deselectAll.addActionListener(new EcouteurBouton(this));
 		pRepporting.add(deselectAll);
 		
-		repporting.addActionListener(this);
+		repporting.addActionListener(new EcouteurBouton(this));
+		repporting.setEnabled(false);
 		pRepporting.add(repporting);
 		
 		// Population de la fenetre
@@ -519,81 +528,12 @@ public class DataAuditPanel extends JPanel implements ActionListener, ListSelect
 		this.add(getPanelColonnes(), BorderLayout.WEST);
 		this.add(panelMapping2, BorderLayout.EAST);
 		panelMapping2.setVisible(false);
-		this.add(getPanelMapping(), BorderLayout.CENTER);
+		this.add(panelContainer, BorderLayout.CENTER);
 		panelMapping.setVisible(false);
 		this.add(pRepporting, BorderLayout.SOUTH);
+		//this.add(panelContainer, BorderLayout.CENTER);
+		valeursfrequentes.setVisible(false);
 		
 	}
 	
-	public void valueChanged(ListSelectionEvent e) {
-		
-		if (e.getSource() == getListeColonne()){
-			
-			Colonne colonneChoisie =  getListeColonne().getSelectedValue();
-			this.getValue().setText(colonneChoisie.getNomColonne());
-			this.getFilledEntries().setText("" + colonneChoisie.getNbCasesRemplies());
-			this.getEmptyEntries().setText("" + colonneChoisie.getNbCasesVides());
-			this.getMappingValue().setText(colonneChoisie.getMapping().getNom());
-			this.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
-			this.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
-			this.getSelectValue().setSelected(colonneChoisie.isSelectionnee());
-			this.getCBMapping().setSelectedIndex(colonneChoisie.getMapping().getId());
-			panelMapping.setVisible(true);
-			panelMapping2.setVisible(true);
-			//System.out.println(this.getDAcontroller().getDAModele().getTabColonne()[getListeColonne().getSelectedIndex()].getMapping().getNom());
-		}
-		
-		if (e.getSource() == getCBMapping()){
-			Colonne colonneChoisie =  getListeColonne().getSelectedValue();
-			Mapping mappingChoisi = getCBMapping().getSelectedValue();
-			
-			colonneChoisie.setMapping(mappingChoisi);
-			this.getMappingValue().setText(colonneChoisie.getMapping().getNom());
-		}
-		
-	}
-	
-	public void actionPerformed(ActionEvent e){
-		
-		
-		if (e.getSource() == getSelectAll()){
-			for (int i = 0; i < getDAcontroller().getDAModele().getNbColonnesTotales(); i++) {
-			}
-			this.getlListeColonne().setText("Number of values selected : " + this.getDAcontroller().getDAModele().getNbLignesSelectionnee());
-		}
-		
-		if (e.getSource() == getDeselectAll()){
-			
-			for (int i = 0; i < getDAcontroller().getDAModele().getNbColonnesTotales(); i++) {
-				getListeColonne().setSelectedIndex(i);
-				getListeColonne().getSelectedValue().setSelectionnee(false);
-				this.getSelectValue().setSelected(getListeColonne().getSelectedValue().isSelectionnee());
-				getListeColonne().setForeground( Color.black );
-			}
-			this.getlListeColonne().setText("Number of values selected : " + this.getDAcontroller().getDAModele().getNbLignesSelectionnee());
-
-		}
-		
-		if (e.getSource() == getSelectValue()){
-			Colonne colonneChoisie =  getListeColonne().getSelectedValue();
-			colonneChoisie.setSelectionnee(getSelectValue().isSelected());
-			this.getlListeColonne().setText("Number of values selected : " + this.getDAcontroller().getDAModele().getNbLignesSelectionnee());
-		}
-		
-		if (e.getSource() == getRepporting()){
-			
-			System.out.println(this.getDAcontroller().getPathFichier());
-			
-				try {
-					this.getDAcontroller().getDAModele().genererFichierCSV(this.getDAcontroller().getDAModele().dataAudit(), this.getDAcontroller().getPathFichier());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-			}
-		
-	}
-	
-
 }
