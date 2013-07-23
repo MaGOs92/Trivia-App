@@ -4,5 +4,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="C:/Users/guillaumefay/workspace/TriviaCSV/mysql-connector-java-5.1.25/mysql-connector-java-5.1.25-bin.jar"/>
 	<classpathentry kind="lib" path="C:/Users/guillaumefay/workspace/TriviaCSV/opencsv-2.3/deploy/opencsv-2.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/guillaumefay/workspace/TriviaCSV/jfreechart-1.0.15/lib/iText-2.1.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/guillaumefay/workspace/TriviaCSV/jfreechart-1.0.15/lib/jcommon-1.0.18.jar"/>
+	<classpathentry kind="lib" path="C:/Users/guillaumefay/workspace/TriviaCSV/jfreechart-1.0.15/lib/jfreechart-1.0.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

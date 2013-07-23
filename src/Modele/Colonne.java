@@ -22,7 +22,9 @@ public class Colonne {
 	
 	private String[] valeursFrequentes;
 	
-	Colonne(int id, String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes){
+	private String[] valeursListe;
+	
+	Colonne(int id, String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes, String[] valeursListe){
 		this.setId(id);
 		this.setNomColonne(nomColonne);
 		this.setTypeDeDonnee(typeDeDonnee);
@@ -30,6 +32,7 @@ public class Colonne {
 		this.setNbCasesVides(nbCasesVides);
 		this.setPourcentagesCasesRemplies(((float)getNbCasesRemplies()-(float)getNbCasesIncorrectes())/(float)nbLignesTotales*(float)100);
 		this.setValeursFrequentes(valeursFrequentes);
+		this.setValeursListe(valeursListe);
 		this.setSelectionnee(false);
 		this.setMapping(new Mapping(0, "None"));
 	}
@@ -50,9 +53,15 @@ public class Colonne {
 		
 		return valeursFrequentes;
 	}
+	
+	public String[] getValeursListe() {
+		return valeursListe;
+	}
 
-	
-	
+	public void setValeursListe(String[] valeursListe) {
+		this.valeursListe = valeursListe;
+	}
+
 	public int getId() {
 		return id;
 	}

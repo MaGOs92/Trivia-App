@@ -25,6 +25,7 @@ public class EcouteurListe implements ListSelectionListener {
 			
 			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
 			vue.getValue().setText(colonneChoisie.getNomColonne());
+			vue.getStorage().setText(colonneChoisie.getTypeDeDonnee());
 			vue.getFilledEntries().setText("" + colonneChoisie.getNbCasesRemplies());
 			vue.getEmptyEntries().setText("" + colonneChoisie.getNbCasesVides());
 			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
@@ -32,9 +33,9 @@ public class EcouteurListe implements ListSelectionListener {
 			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
 			vue.getSelectValue().setSelected(colonneChoisie.isSelectionnee());
 			vue.getCBMapping().setSelectedIndex(colonneChoisie.getMapping().getId());
+			vue.getListVF().setListData(vue.getDAcontroller().getDAModele().getTabColonne()[vue.getListeColonne().getSelectedIndex()].getValeursListe());
 			vue.panelMapping.setVisible(true);
 			vue.panelMapping2.setVisible(true);
-			vue.valeursfrequentes.setVisible(true);
 
 		}
 		

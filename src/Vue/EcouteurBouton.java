@@ -3,7 +3,8 @@ package Vue;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
+
+import javax.swing.JOptionPane;
 
 public class EcouteurBouton implements ActionListener {
 	
@@ -47,14 +48,21 @@ public void actionPerformed(ActionEvent e){
 		}
 		
 		else if (source == vue.getRepporting()){
-				try {
-					vue.getDAcontroller().getDAModele().genererFichierCSV(vue.getDAcontroller().getDAModele().dataAudit(), vue.getDAcontroller().getPathFichier());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 				
+			String nomDuFichier = vue.getDAcontroller().getDAModele().nomDuFichierPDF(vue.getDAcontroller().getPathFichier());
+			
+			Modele.PDFGraphiques.writeChartToPDF(nomDuFichier, vue.getDAcontroller().getDAModele());
+			
+			Object[] options = { "Exit the program", "Return to mapping menu" };
+			int option = JOptionPane.showOptionDialog(null, "A new PDF reporting has been generated : " + nomDuFichier, "DataAudit report generated",
+					JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+					null, options, options[0]);
+			
+			if (option == JOptionPane.YES_OPTION){
+				System.exit(0);
 			}
+
+		}
 		
 	}
 	

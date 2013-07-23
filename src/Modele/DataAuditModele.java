@@ -164,15 +164,17 @@ public class DataAuditModele {
 		
 		ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
 		
-		String [] valeursFrequentes = new String [3];
+		String [] valeursFrequentes = new String [6];
 		
 		int i = 0;
-		
+
 		if (this.getMetadata().getColumnTypeName(index) == "VARCHAR"){
 			
-			while(resultat.next() && i < 3){
+			while(resultat.next() && i < 6){
 				
-				valeursFrequentes[i] = "Value : " + resultat.getString(1).replaceAll("\\W", "") + "\t number of entries : " + resultat.getInt(2);
+				valeursFrequentes[i] = resultat.getString(1).replaceAll("\\W", "");
+				i++;
+				valeursFrequentes[i] = "" + resultat.getInt(2);
 				i++;
 				
 			}
@@ -180,16 +182,53 @@ public class DataAuditModele {
 		
 		else{
 			
-			while(resultat.next() && i < 3){
-				valeursFrequentes[i] = "Value : " + resultat.getInt(1) + "\t number of entries : " + resultat.getInt(2);
+			while(resultat.next() && i < 6){
+				
+				valeursFrequentes[i] = "" + resultat.getInt(1);
+				i++;
+				valeursFrequentes[i] = "" + resultat.getInt(2);
 				i++;
 			}
-			
 		}
 		
 		return valeursFrequentes;
 				
 	}
+	
+	// Tableau pour remplir la liste de valeurs fréquentes
+	public String[] valeursListe(int index) throws SQLException{
+		
+		 String sql = "select " + this.getMetadata().getColumnName(index) + ", count(" + this.getMetadata().getColumnName(index) + ") as cnt ";
+			sql +=	"from " + getNomTable() + " ";
+			sql +=	"group by " + this.getMetadata().getColumnName(index) + " ";
+			sql += "having count(" + this.getMetadata().getColumnName(index) + ") > 1 ";
+			sql +=	"order by cnt desc";
+	
+	ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
+	
+	String [] valeursListe = new String [25];
+	
+	int i = 0;
+	
+	if (this.getMetadata().getColumnTypeName(index) == "VARCHAR")
+	{
+		while(resultat.next() && i < 25){
+			valeursListe[i] = resultat.getString(1);
+			i++;
+		}
+	}
+	else
+	{
+		while(resultat.next() && i < 25){
+			
+			valeursListe[i] = "" + resultat.getInt(1);
+			i++;
+		}
+			
+	}
+	
+	return valeursListe;
+	}		
 	
 	public Colonne[] remplissageColonne() throws SQLException{
 		
@@ -203,7 +242,8 @@ public class DataAuditModele {
 										this.getNbLignesTotales() - this.nbLignesVides(i+1),
 										this.nbLignesVides(i+1),
 										this.getNbLignesTotales(),
-										this.valeursFrequentes(i+1));
+										this.valeursFrequentes(i+1),
+										this.valeursListe(i+1));
 			
 		}
 		
@@ -275,6 +315,17 @@ public class DataAuditModele {
 		
 		System.out.println("Fichier de data audit généré : " + chemin);
 		
+	}
+	
+	public String nomDuFichierPDF(String chemin){
+		
+		String pref = "DataAudit_";
+		
+		chemin = chemin.substring(0, chemin.lastIndexOf("\\") + 1);
+		
+		chemin = chemin + pref + this.getNomTable() + ".pdf";
+		
+		return chemin;
 	}
 	
 }

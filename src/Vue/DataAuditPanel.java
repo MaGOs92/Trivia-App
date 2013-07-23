@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -45,6 +46,8 @@ public class DataAuditPanel extends JPanel {
 	JList<Mapping> CBMapping;
 	JLabel lValue;
 	JLabel value;
+	JLabel lStorage;
+	JLabel storage;
 	JLabel lFilledentries;
 	JLabel filledEntries;
 	JLabel lEmptyEntries;
@@ -74,6 +77,32 @@ public class DataAuditPanel extends JPanel {
 	public JLabel getlListeColonne() {
 		return lListeColonne;
 	}
+
+	
+	
+	public JLabel getlStorage() {
+		return lStorage;
+	}
+
+
+
+	public void setlStorage(JLabel lStorage) {
+		this.lStorage = lStorage;
+	}
+
+
+
+	public JLabel getStorage() {
+		return storage;
+	}
+
+
+
+	public void setStorage(JLabel storage) {
+		this.storage = storage;
+	}
+
+
 
 	public void setlListeColonne(JLabel lListeColonne) {
 		this.lListeColonne = lListeColonne;
@@ -373,6 +402,9 @@ public class DataAuditPanel extends JPanel {
 		lNumberEntries = new JLabel("Total number of entries :");
 		numberEntries = new JLabel("" + this.getDAcontroller().getDAModele().getNbLignesTotales());
 		lNumberEntries.setLabelFor(numberEntries);
+		
+		JLabel lab = new JLabel(new ImageIcon("logo.png"));
+		pInfo.add(lab, FlowLayout.LEFT);
 		pInfo.add(lFile);
 		pInfo.add(file);
 		pInfo.add(lNumberEntries);
@@ -389,11 +421,12 @@ public class DataAuditPanel extends JPanel {
 		listeColonne.setLayoutOrientation(JList.VERTICAL);
 		listeColonne.setVisibleRowCount(-1);
 		listeColonne.setSelectedIndex(0);
+		listeColonne.setCellRenderer(new MyCellRenderer(this));
 		listeColonne.addListSelectionListener(new EcouteurListe(this));
 		
 		
 		JScrollPane listScroller = new JScrollPane(listeColonne);
-		listScroller.setPreferredSize(new Dimension(250, 500));
+		listScroller.setPreferredSize(new Dimension(150, 500));
 		
 		getPanelColonnes().add(containerValuesList, BorderLayout.NORTH);
 		getPanelColonnes().add(listScroller, BorderLayout.CENTER);
@@ -422,7 +455,7 @@ public class DataAuditPanel extends JPanel {
 		LMapping.setLabelFor(CBMapping);
 		CBMapping.addListSelectionListener(new EcouteurListe(this));
 		JScrollPane listScroller2 = new JScrollPane(CBMapping);
-		listScroller2.setPreferredSize(new Dimension(150, 300));
+		listScroller2.setPreferredSize(new Dimension(150, 500));
 		JPanel containerMapList = new JPanel(new FlowLayout());
 		containerMapList.add(LMapping);
 		panelMapping2.add(containerMapList, BorderLayout.NORTH);
@@ -433,6 +466,12 @@ public class DataAuditPanel extends JPanel {
 		value = new JLabel("");
 		lValue.setLabelFor(value);
 		panelMapping.add(value);
+		
+		lStorage = new JLabel("Storage :", JLabel.TRAILING);
+		panelMapping.add(lStorage);
+		storage = new JLabel("");
+		lStorage.setLabelFor(storage);
+		panelMapping.add(storage);
 		
 		lFilledentries = new JLabel("Number of filled entries :", JLabel.TRAILING);
 		panelMapping.add(lFilledentries);
@@ -473,34 +512,34 @@ public class DataAuditPanel extends JPanel {
 		
 		// Valeurs fréquentes
 		
-		valeursfrequentes = new JPanel(new BorderLayout());
-		VFLabelContainer = new JPanel(new FlowLayout());
+		//valeursfrequentes = new JPanel(new FlowLayout());
 		lvaleursfrequentes = new JLabel("Frequent values : ");
-		VFLabelContainer.add(lvaleursfrequentes);
-
+		//valeursfrequentes.add(lvaleursfrequentes);
+		panelMapping.add(lvaleursfrequentes);
 		
-		listVF = new JList<String>(this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursFrequentes()); //data has type Object[]
+		listVF = new JList<String>(this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursListe());
 		listVF.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listVF.setLayoutOrientation(JList.VERTICAL);
 		listVF.setVisibleRowCount(-1);
 		listVF.addListSelectionListener(new EcouteurListe(this));
 		
 		JScrollPane ScrollerVF = new JScrollPane(listVF);
-		listScroller.setPreferredSize(new Dimension(50, 50));
-
-		valeursfrequentes.add(VFLabelContainer, BorderLayout.NORTH);
-		valeursfrequentes.add(ScrollerVF, BorderLayout.CENTER);
+		//listScroller.setPreferredSize(new Dimension(100, 250));
+		panelMapping.add(ScrollerVF);
+		
+		//valeursfrequentes.add(VFLabelContainer);
+		//valeursfrequentes.add(ScrollerVF);
 		
 		//Lay out the panel.
 		SpringUtilities.makeCompactGrid(panelMapping,
-		                                7, 2, //rows, cols
+		                                9, 2, //rows, cols
 		                                10, 10,        //initX, initY
 		                                10, 10);       //xPad, yPad
 		
 		
 		JPanel panelContainer = new JPanel(new BorderLayout());
 		panelContainer.add(panelMapping, BorderLayout.CENTER);
-		panelContainer.add(valeursfrequentes, BorderLayout.SOUTH);
+		//panelContainer.add(valeursfrequentes, BorderLayout.SOUTH);
 		
 		// Construction du JPanel repporting
 		
@@ -532,7 +571,7 @@ public class DataAuditPanel extends JPanel {
 		panelMapping.setVisible(false);
 		this.add(pRepporting, BorderLayout.SOUTH);
 		//this.add(panelContainer, BorderLayout.CENTER);
-		valeursfrequentes.setVisible(false);
+		//valeursfrequentes.setVisible(false);
 		
 	}
 	

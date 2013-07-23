@@ -47,10 +47,8 @@ public void actionPerformed(ActionEvent e){
 	Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
 	colonneChoisie.setSelectionnee(vue.getSelectValue().isSelected());
 	vue.getListeColonne().setSelectedIndex(vue.getListeColonne().getSelectedIndex());
-	if (vue.getDAcontroller().getDAModele().getTabColonne()[vue.getListeColonne().getSelectedIndex()].isSelectionnee())
-		vue.getListeColonne().getComponent(vue.getListeColonne().getSelectedIndex()).setForeground(Color.RED);
-	else
-		vue.getListeColonne().getComponent(vue.getListeColonne().getSelectedIndex()).setForeground(Color.BLACK);
+	
+	vue.getListeColonne().setCellRenderer(new MyCellRenderer(vue));
 		
 	vue.getlListeColonne().setText("Number of values selected : " + vue.getDAcontroller().getDAModele().getNbLignesSelectionnee());
 	
@@ -66,24 +64,37 @@ public void actionPerformed(ActionEvent e){
 }
 
 
-class MyCellRenderer extends JLabel implements ListCellRenderer {
-    /**
-	 * 
-	 */
+class MyCellRenderer extends JLabel implements ListCellRenderer<Colonne> {
+	
 	private static final long serialVersionUID = 1L;
-	public MyCellRenderer() {
+	
+	public MyCellRenderer(DataAuditPanel DAPanel) {
         setOpaque(true);
     }
-    public Component getListCellRendererComponent(
-        JList<Colonne> list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus)
-    {
-    	
-        if (b.equals("1"))
-        	setForeground(new Color(83,213,148));
-        return this;
-    }
+
+	public Component getListCellRendererComponent(
+			JList<? extends Colonne> arg0, Colonne arg1, int arg2,
+			boolean arg3, boolean arg4) {
+		
+		 setText(arg1.toString());
+	        
+	        Color foreground = Color.BLACK;
+	        Color background = Color.WHITE;
+	             
+	        if (arg3){
+	        	foreground = arg0.getSelectionForeground();
+	        	background = arg0.getSelectionBackground();
+	        }
+	        
+	        for (int i = 0; i < arg0.getModel().getSize() ; i++){
+	        	if (arg1.isSelectionnee())
+	        		foreground = Color.RED;
+	        }
+	        
+	        setForeground(foreground);
+	        setBackground(background);
+	        setEnabled(arg0.isEnabled());
+	        setFont(arg0.getFont());
+	        return this;
+	}
 }
