@@ -1,13 +1,10 @@
 package Vue;
 
-import java.sql.SQLException;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import Modele.Colonne;
 import Modele.Mapping;
-import Modele.MappingId;
 
 public class EcouteurListe implements ListSelectionListener {
 	
@@ -40,25 +37,16 @@ public class EcouteurListe implements ListSelectionListener {
 		}
 		
 		else if (source == vue.getCBMapping()){
+			
 			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
 			Mapping mappingChoisi = vue.getCBMapping().getSelectedValue();
 			
 			colonneChoisie.setMapping(mappingChoisi);
 			
-			if (mappingChoisi.getId() == 0){
-				colonneChoisie.setNbCasesIncorrectes(0);
-			}
+			colonneChoisie.setNbCasesIncorrectes(mappingChoisi.CalculerValeursIncorrects(colonneChoisie, vue.getDAcontroller().getDAModele().getNomTable(), vue.getDAcontroller().getDAModele().getConnexion()));
 			
-			else if (mappingChoisi.getId() == 1){
-				MappingId mapId  = new MappingId(colonneChoisie, vue.getDAcontroller().getDAModele().getNomTable(), vue.getDAcontroller().getDAModele().getConnexion());
-				try {
-					colonneChoisie.setNbCasesIncorrectes(mapId.lignesIncorrectes());
-					colonneChoisie.setPourcentagesCasesRemplies(((float)colonneChoisie.getNbCasesRemplies()-(float)colonneChoisie.getNbCasesIncorrectes())/(float)vue.getDAcontroller().getDAModele().getNbLignesTotales()*(float)100);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
+			colonneChoisie.calculerPoucentage();
+			
 			
 			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());

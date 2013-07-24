@@ -172,7 +172,7 @@ public class DataAuditModele {
 			
 			while(resultat.next() && i < 6){
 				
-				valeursFrequentes[i] = resultat.getString(1).replaceAll("\\W", "");
+				valeursFrequentes[i] = resultat.getString(1);
 				i++;
 				valeursFrequentes[i] = "" + resultat.getInt(2);
 				i++;

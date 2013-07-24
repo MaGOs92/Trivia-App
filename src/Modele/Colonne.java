@@ -7,6 +7,8 @@ public class Colonne {
 	private int id;
 	
 	private Mapping mapping;
+	
+	private int nbLignesTotales;
 
 	private String nomColonne;
 	
@@ -42,6 +44,10 @@ public class Colonne {
 		return toString;
 	}
 	
+	public void calculerPoucentage(){
+		this.setPourcentagesCasesRemplies(((float)this.getNbCasesRemplies()-(float)this.getNbCasesIncorrectes())/(float)this.getNbLignesTotales()*(float)100);
+	}
+	
 	public String afficherValeursFrequentes(){
 		
 		String valeursFrequentes = "";
@@ -60,6 +66,16 @@ public class Colonne {
 
 	public void setValeursListe(String[] valeursListe) {
 		this.valeursListe = valeursListe;
+	}
+	
+	
+
+	public int getNbLignesTotales() {
+		return nbLignesTotales;
+	}
+
+	public void setNbLignesTotales(int nbLignesTotales) {
+		this.nbLignesTotales = nbLignesTotales;
 	}
 
 	public int getId() {
