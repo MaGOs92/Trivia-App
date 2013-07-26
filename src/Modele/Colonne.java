@@ -30,13 +30,14 @@ public class Colonne {
 		this.setId(id);
 		this.setNomColonne(nomColonne);
 		this.setTypeDeDonnee(typeDeDonnee);
+		this.setNbLignesTotales(nbLignesTotales);
 		this.setNbCasesRemplies(nbCasesRemplies);
 		this.setNbCasesVides(nbCasesVides);
-		this.setPourcentagesCasesRemplies(((float)getNbCasesRemplies()-(float)getNbCasesIncorrectes())/(float)nbLignesTotales*(float)100);
 		this.setValeursFrequentes(valeursFrequentes);
 		this.setValeursListe(valeursListe);
 		this.setSelectionnee(false);
 		this.setMapping(new Mapping(0, "None"));
+		this.setPourcentagesCasesRemplies(this.calculerPoucentage());
 	}
 	
 	public String toString(){
@@ -44,8 +45,17 @@ public class Colonne {
 		return toString;
 	}
 	
-	public void calculerPoucentage(){
-		this.setPourcentagesCasesRemplies(((float)this.getNbCasesRemplies()-(float)this.getNbCasesIncorrectes())/(float)this.getNbLignesTotales()*(float)100);
+	public float calculerPoucentage(){
+		
+		float resultat;
+		float total = this.getNbLignesTotales();
+		float remplies = this.getNbCasesRemplies();
+		float incorrects = this.getNbCasesIncorrectes();
+		
+		resultat = ((remplies - incorrects)/total) * 100;
+		
+		return resultat;
+
 	}
 	
 	public String afficherValeursFrequentes(){

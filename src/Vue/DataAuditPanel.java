@@ -61,13 +61,16 @@ public class DataAuditPanel extends JPanel {
 	JLabel pourcentage;
 	JCheckBox selectValue;
 	JPanel pRepporting;
+	JLabel lChoixRadio;
+	ButtonGroup choixRadio;
+	JRadioButton keep;
+	JRadioButton remove;
 	JButton repporting;
 	JButton selectAll;
 	JButton deselectAll;
 	
 	JPanel panelMapping2;
 	
-	JPanel valeursfrequentes;
 	JPanel VFLabelContainer;
 	JLabel lvaleursfrequentes;
 	JList<String> listVF;
@@ -116,13 +119,54 @@ public class DataAuditPanel extends JPanel {
 		this.panelMapping2 = panelMapping2;
 	}
 
-	public JPanel getValeursfrequentes() {
-		return valeursfrequentes;
+
+	public JLabel getlChoixRadio() {
+		return lChoixRadio;
 	}
 
-	public void setValeursfrequentes(JPanel valeursfrequentes) {
-		this.valeursfrequentes = valeursfrequentes;
+
+
+	public void setlChoixRadio(JLabel lChoixRadio) {
+		this.lChoixRadio = lChoixRadio;
 	}
+
+
+
+	public ButtonGroup getChoixRadio() {
+		return choixRadio;
+	}
+
+
+
+	public void setChoixRadio(ButtonGroup choixRadio) {
+		this.choixRadio = choixRadio;
+	}
+
+
+
+	public JRadioButton getKeep() {
+		return keep;
+	}
+
+
+
+	public void setKeep(JRadioButton keep) {
+		this.keep = keep;
+	}
+
+
+
+	public JRadioButton getRemove() {
+		return remove;
+	}
+
+
+
+	public void setRemove(JRadioButton remove) {
+		this.remove = remove;
+	}
+
+
 
 	public JPanel getVFLabelContainer() {
 		return VFLabelContainer;
@@ -503,18 +547,24 @@ public class DataAuditPanel extends JPanel {
 		lPourcentage.setLabelFor(pourcentage);
 		panelMapping.add(pourcentage);
 		
-		lSelectValue = new JLabel("Select this value in the repporting :", JLabel.TRAILING);
-		panelMapping.add(lSelectValue);
-		selectValue = new JCheckBox();
-		lSelectValue.setLabelFor(selectValue);
-		selectValue.addActionListener(new EcouteurCB(this));
-		panelMapping.add(selectValue);
 		
+		lChoixRadio = new JLabel("Keep or remove selected value :", JLabel.TRAILING);
+		panelMapping.add(lChoixRadio);
+		JPanel pRadio = new JPanel(new BorderLayout());
+		keep = new JRadioButton("Keep");
+		remove = new JRadioButton("Remove");
+		choixRadio = new ButtonGroup();
+		choixRadio.add(keep);
+		choixRadio.add(remove);
+		pRadio.add(keep, BorderLayout.CENTER);
+		pRadio.add(remove, BorderLayout.WEST);
+		panelMapping.add(pRadio);
+				
 		// Valeurs fréquentes
 		
-		//valeursfrequentes = new JPanel(new FlowLayout());
-		lvaleursfrequentes = new JLabel("Frequent values : ");
-		//valeursfrequentes.add(lvaleursfrequentes);
+
+		lvaleursfrequentes = new JLabel("Values : ");
+
 		panelMapping.add(lvaleursfrequentes);
 		
 		listVF = new JList<String>(this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursListe());
@@ -524,15 +574,23 @@ public class DataAuditPanel extends JPanel {
 		listVF.addListSelectionListener(new EcouteurListe(this));
 		
 		JScrollPane ScrollerVF = new JScrollPane(listVF);
-		//listScroller.setPreferredSize(new Dimension(100, 250));
+
 		panelMapping.add(ScrollerVF);
 		
-		//valeursfrequentes.add(VFLabelContainer);
-		//valeursfrequentes.add(ScrollerVF);
+		
+		
+		lSelectValue = new JLabel("Select this value in the repporting :", JLabel.TRAILING);
+		panelMapping.add(lSelectValue);
+		selectValue = new JCheckBox();
+		lSelectValue.setLabelFor(selectValue);
+		selectValue.addActionListener(new EcouteurCB(this));
+		panelMapping.add(selectValue);
+		
+
 		
 		//Lay out the panel.
 		SpringUtilities.makeCompactGrid(panelMapping,
-		                                9, 2, //rows, cols
+		                                10, 2, //rows, cols
 		                                10, 10,        //initX, initY
 		                                10, 10);       //xPad, yPad
 		

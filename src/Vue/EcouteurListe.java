@@ -45,7 +45,7 @@ public class EcouteurListe implements ListSelectionListener {
 			
 			colonneChoisie.setNbCasesIncorrectes(mappingChoisi.CalculerValeursIncorrects(colonneChoisie, vue.getDAcontroller().getDAModele().getNomTable(), vue.getDAcontroller().getDAModele().getConnexion()));
 			
-			colonneChoisie.calculerPoucentage();
+			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 			
 			
 			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
