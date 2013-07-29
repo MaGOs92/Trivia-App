@@ -121,7 +121,7 @@ public class PDFGraphiques {
             
             System.out.println(nbValeurVidesS + " " + nbValeurVidesF);
     	
-    		Image image = com.lowagie.text.Image.getInstance("trivia.jpg");
+    		Image image = com.lowagie.text.Image.getInstance("Img\\trivia.jpg");
     		document.add(image);
     		
     	    Paragraph titre = new Paragraph();

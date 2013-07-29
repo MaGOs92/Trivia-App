@@ -447,7 +447,7 @@ public class DataAuditPanel extends JPanel {
 		numberEntries = new JLabel("" + this.getDAcontroller().getDAModele().getNbLignesTotales());
 		lNumberEntries.setLabelFor(numberEntries);
 		
-		JLabel lab = new JLabel(new ImageIcon("logo.png"));
+		JLabel lab = new JLabel(new ImageIcon("Img\\logo.png"));
 		pInfo.add(lab, FlowLayout.LEFT);
 		pInfo.add(lFile);
 		pInfo.add(file);

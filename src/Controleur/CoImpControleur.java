@@ -1,6 +1,7 @@
 package Controleur;
 
 
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JFrame;
@@ -61,10 +62,12 @@ public class CoImpControleur {
 		
 		setBestLookAndFeelAvailable();
 	     
-		JFrame fenetre = new JFrame ("DataAudit");
+		JFrame fenetre = new JFrame ("Trivia DataDiscovery");
 		fenetre.setSize(500, 230);
+		fenetre.setResizable(false);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fenetre.setTitle("DataAudit");
+		fenetre.setTitle("Trivia DataDiscovery");
+		fenetre.setIconImage(Toolkit.getDefaultToolkit().getImage("Img\\icone.png")); 
 		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
 	
 		fenetre.setVisible(true);

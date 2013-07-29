@@ -173,6 +173,8 @@ public class Mapping {
 			if (nbValeursIncorrectes >= this.getColonne().getNbCasesRemplies()){
 				nbValeursIncorrectes = this.getColonne().getNbCasesRemplies();
 			}
+			
+			System.out.println("Mapping value : id");
 		
 			return nbValeursIncorrectes;
 			
@@ -206,6 +208,8 @@ public class Mapping {
 				nbValeursIncorrectes = this.getColonne().getNbCasesRemplies();
 			}
 				
+			System.out.println("Mapping value : country");
+			
 			return nbValeursIncorrectes;
 				
 			}
@@ -238,6 +242,8 @@ public class Mapping {
 			if (nbValeursIncorrectes >= this.getColonne().getNbCasesRemplies()){
 				nbValeursIncorrectes = this.getColonne().getNbCasesRemplies();
 			}
+			
+			System.out.println("Mapping value : company");
 				
 			return nbValeursIncorrectes;
 				
@@ -246,6 +252,8 @@ public class Mapping {
 		
 		// Adresse 1 ??
 		else if (this.getId() == 4){
+			
+			System.out.println("Mapping value : adresse 1");
 			return nbValeursIncorrectes;
 		}
 		
@@ -270,7 +278,7 @@ public class Mapping {
 			
 			 String sql = "select " + this.getColonne().getNomColonne() + " ";
 				sql +=	"from " + this.getNomTable();
-				
+			
 			ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);
 		
 			try {

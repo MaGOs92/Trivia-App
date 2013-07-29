@@ -1,5 +1,7 @@
 package Controleur;
 
+import java.awt.Toolkit;
+
 import javax.swing.JFrame;
 
 import com.mysql.jdbc.Connection;
@@ -76,10 +78,12 @@ public class DataAuditControleur {
 	{	
 		// Création de la fenetre
 		
-		JFrame fenetre = new JFrame ("DataAudit");
+		JFrame fenetre = new JFrame ("Trivia DataDiscovery");
 		fenetre.setSize(800, 600);
+		fenetre.setResizable(false);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fenetre.setTitle("DataAudit");
+		fenetre.setIconImage(Toolkit.getDefaultToolkit().getImage("Img\\icone.png")); 
+		fenetre.setTitle("Trivia DataDiscovery");
 		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
 	
 		fenetre.setVisible(true);
