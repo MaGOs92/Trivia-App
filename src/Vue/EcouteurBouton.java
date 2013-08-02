@@ -23,7 +23,7 @@ public void actionPerformed(ActionEvent e){
 				vue.getListeColonne().setSelectedIndex(i);
 				vue.getListeColonne().getSelectedValue().setSelectionnee(true);
 				vue.getSelectValue().setSelected(vue.getListeColonne().getSelectedValue().isSelectionnee());
-				vue.getListeColonne().setForeground( Color.red );
+				vue.getListeColonne().setForeground( Color.GREEN );
 			}
 
 			vue.getlListeColonne().setText("Number of values selected : " + vue.getDAcontroller().getDAModele().getNbLignesSelectionnee());
@@ -39,7 +39,7 @@ public void actionPerformed(ActionEvent e){
 				vue.getListeColonne().setSelectedIndex(i);
 				vue.getListeColonne().getSelectedValue().setSelectionnee(false);
 				vue.getSelectValue().setSelected(vue.getListeColonne().getSelectedValue().isSelectionnee());
-				vue.getListeColonne().setForeground( Color.black );
+				vue.getListeColonne().setForeground( Color.BLACK );
 			}
 			vue.getlListeColonne().setText("Number of values selected : " + vue.getDAcontroller().getDAModele().getNbLignesSelectionnee());
 			

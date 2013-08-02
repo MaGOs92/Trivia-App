@@ -25,8 +25,44 @@ public class ImportationPanel extends JPanel implements ActionListener {
 	String pathFichier;
 	FileFilter filtre;
 	CoImpControleur controller;
-		
+	JLabel message;
+	JLabel loader;
+	JPanel loa;
+	JPanel mes;
 	
+	
+	public JPanel getLoa() {
+		return loa;
+	}
+
+	public void setLoa(JPanel loa) {
+		this.loa = loa;
+	}
+
+	public JPanel getMes() {
+		return mes;
+	}
+
+	public void setMes(JPanel mes) {
+		this.mes = mes;
+	}
+
+	public JLabel getMessage() {
+		return message;
+	}
+
+	public void setMessage(JLabel message) {
+		this.message = message;
+	}
+
+	public JLabel getLoader() {
+		return loader;
+	}
+
+	public void setLoader(JLabel loader) {
+		this.loader = loader;
+	}
+
 	public CoImpControleur getController() {
 		return controller;
 	}
@@ -93,8 +129,28 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		importer.setLayout(new FlowLayout());
 		JPanel dataAudit = new JPanel();
 		dataAudit.setLayout(new FlowLayout());
+		
+		JPanel milieu = new JPanel();
+		milieu.setLayout(new BorderLayout());
+		
 		JPanel fic = new JPanel();
 		fic.setLayout(new FlowLayout());
+		
+		JPanel mes = new JPanel();
+		mes.setLayout(new BorderLayout());
+
+		
+		JPanel loa = new JPanel();
+		loa.setLayout(new BorderLayout());
+
+		
+		this.setLoader(new JLabel(new ImageIcon("Img\\loader.gif")));
+		this.getLoader().add(loa);
+
+		
+		this.setMessage(new JLabel("There may be a delay while your file loads"));
+		this.getMessage().add(mes);
+
 		
 		this.setInfo(new JLabel("Select the CSV file that you want to audit."));
 		importer.add(getInfo());
@@ -111,7 +167,6 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		this.setFichier(new JLabel("Selected File : none"));
 		fic.add(getFichier());
 		
-
 		this.add(importer, BorderLayout.NORTH);
 		this.add(dataAudit, BorderLayout.SOUTH);
 		this.add(fic, BorderLayout.CENTER);
@@ -148,6 +203,7 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		 }
 		 
 		 if (ae.getSource() == getDataAudit()){
+			 
 			try {
 				getController().lancerDataAudit();
 			} catch (IOException e) {

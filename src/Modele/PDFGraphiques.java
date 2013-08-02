@@ -104,33 +104,32 @@ public class PDFGraphiques {
     	
     		String valeursSelectionnees = "";
     		
-    		int nbValeurVidesS = 0;
+    		int nbValeurRempliesS = 0;
     		
-    		int nbValeurVidesF = 0;
+    		int nbValeurRempliesF = 0;
     		
             for (int i = 0; i < model.getNbColonnesTotales(); i++){
-        		nbValeurVidesS += model.getTabColonne()[i].getNbCasesVides();
+            	nbValeurRempliesS = nbValeurRempliesS + model.getTabColonne()[i].getNbCasesRemplies();
             }
     		
             for (int i = 0; i < model.getNbColonnesTotales(); i++){
             	if (model.getTabColonne()[i].isSelectionnee()){
             		valeursSelectionnees += model.getTabColonne()[i].getNomColonne() + "\t";
-            		nbValeurVidesS += model.getTabColonne()[i].getNbCasesVides();
+            		nbValeurRempliesF = nbValeurRempliesF + model.getTabColonne()[i].getNbCasesRemplies();
             	}
             }
             
-            System.out.println(nbValeurVidesS + " " + nbValeurVidesF);
     	
     		Image image = com.lowagie.text.Image.getInstance("Img\\trivia.jpg");
     		document.add(image);
     		
     	    Paragraph titre = new Paragraph();
     	    // We add one empty line
-    	    addEmptyLine(titre, 7);
+    	    addEmptyLine(titre, 3);
     	    // Lets write a big header
     	    titre.add(new Paragraph("Data Audit " + model.getNomTable(), titreFont));
 
-    	    addEmptyLine(titre, 7);
+    	    addEmptyLine(titre, 3);
     	    
     	    titre.setAlignment(Element.ALIGN_CENTER);
     	    
@@ -142,10 +141,10 @@ public class PDFGraphiques {
     	    
     	    addEmptyLine(preface, 1);
     	    preface.add(new Paragraph("Audited file : " + model.getNomTable() +
-    	    		"\n Total number of values : " + model.getNbColonnesTotales() +
+    	    		"\n Total number of fields : " + model.getNbColonnesTotales() +
     	    		"\n Total number of entries : " + model.getNbLignesTotales() +
-    	    		"\n File's fill rate : " + (nbValeurVidesF / (model.getNbColonnesTotales() * model.getNbLignesTotales())) * 100 + " %" +
-    	    		"\n Selected values's fill rate : " + (nbValeurVidesS / (model.getNbLignesSelectionnee() * model.getNbLignesTotales())) * 100 + " %" +
+    	    		"\n File's fill rate : " + (nbValeurRempliesF / (model.getNbColonnesTotales() * model.getNbLignesTotales())) * 100 + " %" +
+    	    		"\n Selected values's fill rate : " + (nbValeurRempliesS / (model.getNbLignesSelectionnee() * model.getNbLignesTotales())) * 100 + " %" +
     	    		"\n Number of selected values : " + model.getNbLignesSelectionnee() +
     	    		"\n Values : " + valeursSelectionnees,smallBold));
     	    

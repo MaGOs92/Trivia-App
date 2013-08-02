@@ -11,14 +11,24 @@ import Modele.DataAuditModele;
 import Modele.ImportationModele;
 import Vue.ConnexionPanel;
 import Vue.ImportationPanel;
+import Vue.LoadingPanel;
 
 public class CoImpControleur {
 
 	   ConnexionPanel coPanel;  
 	   ImportationPanel impPanel;
+	   LoadingPanel loaPanel;
 	   DataAuditModele traitement;
 	   JFrame fenetre;
 	   
+	   
+	   
+	public LoadingPanel getLoaPanel() {
+		return loaPanel;
+	}
+	public void setLoaPanel(LoadingPanel loaPanel) {
+		this.loaPanel = loaPanel;
+	}
 	public ConnexionPanel getCoPanel() {
 		return coPanel;
 	}
@@ -87,6 +97,7 @@ public class CoImpControleur {
 		  setFenetre(this.creerFenetre());
 	      setCoPanel(new ConnexionPanel(this));  
 	      setImpPanel(new ImportationPanel(this));
+	      setLoaPanel(new LoadingPanel());
 	      
 	      getFenetre().getContentPane().add(getCoPanel());
 
@@ -100,6 +111,12 @@ public class CoImpControleur {
 	   }
 	   
 	   public void lancerDataAudit() throws IOException{
+		   
+		    getFenetre().getContentPane().removeAll();
+		   
+		    getFenetre().getContentPane().add(getLoaPanel());
+			 
+			getFenetre().setVisible(true);
 		   	
 			String chemin = getImpPanel().getPathFichier();
 			

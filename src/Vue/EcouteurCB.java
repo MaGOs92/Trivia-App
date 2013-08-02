@@ -88,7 +88,7 @@ class MyCellRenderer extends JLabel implements ListCellRenderer<Colonne> {
 	        
 	        for (int i = 0; i < arg0.getModel().getSize() ; i++){
 	        	if (arg1.isSelectionnee())
-	        		foreground = Color.RED;
+	        		foreground = Color.GREEN;
 	        }
 	        
 	        setForeground(foreground);

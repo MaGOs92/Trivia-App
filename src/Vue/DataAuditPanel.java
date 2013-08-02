@@ -456,7 +456,7 @@ public class DataAuditPanel extends JPanel {
 		
 		// Construction du panel colonne
 		
-		lListeColonne = new JLabel("Number of values selected : " + this.getDAcontroller().getDAModele().getNbLignesSelectionnee());
+		lListeColonne = new JLabel("Number of fields selected : " + this.getDAcontroller().getDAModele().getNbLignesSelectionnee());
 		JPanel containerValuesList = new JPanel(new FlowLayout());
 		containerValuesList.add(lListeColonne);
 		
@@ -505,7 +505,7 @@ public class DataAuditPanel extends JPanel {
 		panelMapping2.add(containerMapList, BorderLayout.NORTH);
 		panelMapping2.add(listScroller2, BorderLayout.CENTER);
 		
-		lValue = new JLabel("Value :", JLabel.TRAILING);
+		lValue = new JLabel("Field :", JLabel.TRAILING);
 		panelMapping.add(lValue);
 		value = new JLabel("");
 		lValue.setLabelFor(value);
@@ -548,7 +548,7 @@ public class DataAuditPanel extends JPanel {
 		panelMapping.add(pourcentage);
 		
 		
-		lChoixRadio = new JLabel("Keep or remove selected value :", JLabel.TRAILING);
+		lChoixRadio = new JLabel("Keep or remove selected field :", JLabel.TRAILING);
 		panelMapping.add(lChoixRadio);
 		JPanel pRadio = new JPanel(new BorderLayout());
 		keep = new JRadioButton("Keep");
@@ -579,7 +579,7 @@ public class DataAuditPanel extends JPanel {
 		
 		
 		
-		lSelectValue = new JLabel("Select this value in the repporting :", JLabel.TRAILING);
+		lSelectValue = new JLabel("Select this field in the repporting :", JLabel.TRAILING);
 		panelMapping.add(lSelectValue);
 		selectValue = new JCheckBox();
 		lSelectValue.setLabelFor(selectValue);
