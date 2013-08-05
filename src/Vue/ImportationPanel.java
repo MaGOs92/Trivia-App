@@ -25,43 +25,7 @@ public class ImportationPanel extends JPanel implements ActionListener {
 	String pathFichier;
 	FileFilter filtre;
 	CoImpControleur controller;
-	JLabel message;
-	JLabel loader;
-	JPanel loa;
-	JPanel mes;
-	
-	
-	public JPanel getLoa() {
-		return loa;
-	}
 
-	public void setLoa(JPanel loa) {
-		this.loa = loa;
-	}
-
-	public JPanel getMes() {
-		return mes;
-	}
-
-	public void setMes(JPanel mes) {
-		this.mes = mes;
-	}
-
-	public JLabel getMessage() {
-		return message;
-	}
-
-	public void setMessage(JLabel message) {
-		this.message = message;
-	}
-
-	public JLabel getLoader() {
-		return loader;
-	}
-
-	public void setLoader(JLabel loader) {
-		this.loader = loader;
-	}
 
 	public CoImpControleur getController() {
 		return controller;
@@ -141,15 +105,7 @@ public class ImportationPanel extends JPanel implements ActionListener {
 
 		
 		JPanel loa = new JPanel();
-		loa.setLayout(new BorderLayout());
-
-		
-		this.setLoader(new JLabel(new ImageIcon("Img\\loader.gif")));
-		this.getLoader().add(loa);
-
-		
-		this.setMessage(new JLabel("There may be a delay while your file loads"));
-		this.getMessage().add(mes);
+		loa.setLayout(new BorderLayout());		
 
 		
 		this.setInfo(new JLabel("Select the CSV file that you want to audit."));
@@ -176,7 +132,7 @@ public class ImportationPanel extends JPanel implements ActionListener {
 	
 	 public void actionPerformed(ActionEvent ae) {
 		 
-		 if (ae.getSource() == getParcourir()){
+		 if (ae.getSource() == this.getParcourir()){
 			 
 			 FileSystemView vueSysteme = FileSystemView.getFileSystemView(); 
 			 
@@ -199,18 +155,23 @@ public class ImportationPanel extends JPanel implements ActionListener {
 	          this.setPathFichier(selectedFile.getAbsolutePath());
 	          this.getFichier().setText("Selected file : " + selectedFile.getAbsolutePath());
 	          this.getDataAudit().setEnabled(true);
+	          
 	        }
 		 }
 		 
-		 if (ae.getSource() == getDataAudit()){
+		 else if (ae.getSource() == this.getDataAudit()){
 			 
-			try {
-				getController().lancerDataAudit();
+			this.getController().loading();
+
+			try{
+			this.getController().lancerDataAudit();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
+
 		 }
+		 
 	 }
 	 
 	public static void main(String[] args){

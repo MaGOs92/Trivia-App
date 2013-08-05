@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.UIManager;
 
 import Modele.DataAuditModele;
@@ -97,7 +98,7 @@ public class CoImpControleur {
 		  setFenetre(this.creerFenetre());
 	      setCoPanel(new ConnexionPanel(this));  
 	      setImpPanel(new ImportationPanel(this));
-	      setLoaPanel(new LoadingPanel());
+	      setLoaPanel(new LoadingPanel(this));
 	      
 	      getFenetre().getContentPane().add(getCoPanel());
 
@@ -110,23 +111,31 @@ public class CoImpControleur {
 		   getFenetre().setVisible(true);
 	   }
 	   
+	   public void loading(){
+		   
+		   getFenetre().getContentPane().removeAll();
+		   getFenetre().getContentPane().add(getLoaPanel());
+		   getFenetre().setVisible(true);
+
+	   }
+	   
 	   public void lancerDataAudit() throws IOException{
-		   
-		    getFenetre().getContentPane().removeAll();
-		   
-		    getFenetre().getContentPane().add(getLoaPanel());
-			 
-			getFenetre().setVisible(true);
-		   	
+		   		   
 			String chemin = getImpPanel().getPathFichier();
 			
 			String nomTable = ImportationModele.nomDeLaTable(chemin);
 					
 			ImportationModele.deleteTable(getCoPanel().getCo() , nomTable);
+			
+			this.getLoaPanel().setHeaderLabel(new JLabel("Creating a new table ..."));
 				
 			ImportationModele.createTable(getCoPanel().getCo() ,nomTable, ImportationModele.champsDeLaTable(ImportationModele.typeDeDonnees(ImportationModele.lecteurDeFichier(chemin)), ImportationModele.nomDesColonnes(ImportationModele.lecteurDeFichier(chemin))));
 			
+			this.getLoaPanel().setHeaderLabel(new JLabel("Loading the file in the database ..."));
+			
 			ImportationModele.loadFichierCSV(getCoPanel().getCo() ,nomTable, chemin);
+			
+			this.getLoaPanel().setHeaderLabel(new JLabel("Adding a unique identifier ..."));
 			
 			ImportationModele.ajoutID(nomTable, getCoPanel().getCo());
 			
@@ -138,7 +147,7 @@ public class CoImpControleur {
 			
 			getFenetre().setVisible(false);
 			
-			DataAuditControleur controller = new DataAuditControleur(this.getCoPanel().getCo(), this.getTraitement(), this.getImpPanel().getPathFichier());
+			DataAuditControleur controller = new DataAuditControleur(this, this.getCoPanel().getCo(), this.getTraitement(), this.getImpPanel().getPathFichier());
 					
 		}
 	}  

@@ -1,47 +1,103 @@
 package Vue;
 
 import java.awt.*;
-import javax.swing.JFrame;
+
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 
-public class LoadingPanel extends JFrame {
+import Controleur.CoImpControleur;
+
+public class LoadingPanel extends JPanel {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	JPanel contentPane;
-    JLabel imageLabel = new JLabel();
-    JLabel headerLabel = new JLabel();
 
-    public LoadingPanel() {
-        try {
-            setDefaultCloseOperation(EXIT_ON_CLOSE);
-            contentPane = (JPanel) getContentPane();
-            contentPane.setLayout(new BorderLayout());
-            setSize(new Dimension(400, 300));
-            setTitle("Your Job Crashed!");
+	JPanel imagePanel = new JPanel(new FlowLayout());
+    JLabel imageLabel = new JLabel();
+    JPanel headerPanel = new JPanel(new FlowLayout());
+    JLabel headerLabel = new JLabel();
+    CoImpControleur controller;
+    
+    
+    
+    
+	public CoImpControleur getController() {
+		return controller;
+	}
+
+	public void setController(CoImpControleur controller) {
+		this.controller = controller;
+	}
+
+	public JPanel getImagePanel() {
+		return imagePanel;
+	}
+
+	public void setImagePanel(JPanel imagePanel) {
+		this.imagePanel = imagePanel;
+	}
+
+	public JLabel getImageLabel() {
+		return imageLabel;
+	}
+
+	public void setImageLabel(JLabel imageLabel) {
+		this.imageLabel = imageLabel;
+	}
+
+	public JPanel getHeaderPanel() {
+		return headerPanel;
+	}
+
+	public void setHeaderPanel(JPanel headerPanel) {
+		this.headerPanel = headerPanel;
+	}
+
+	public JLabel getHeaderLabel() {
+		return headerLabel;
+	}
+
+	public void setHeaderLabel(JLabel headerLabel) {
+		this.headerLabel = headerLabel;
+	}
+
+	public LoadingPanel(CoImpControleur controller) {
+        	
+        	this.setController(controller);
+        	
+        	this.setLayout(new BorderLayout());
+           
             // add the header label
-            headerLabel.setFont(new java.awt.Font("Comic Sans MS", Font.BOLD, 16));
-            headerLabel.setText("   Your job crashed during the save process!");
-            contentPane.add(headerLabel, java.awt.BorderLayout.NORTH);
+            headerLabel.setText("Loading ...");
+            headerPanel.add(headerLabel);
+            this.add(headerPanel, java.awt.BorderLayout.NORTH);
+            
             // add the image label
-            ImageIcon ii = new ImageIcon(this.getClass().getResource(
-                    "Img\\loader.gif"));
+            ImageIcon ii = new ImageIcon("Img\\loader.gif");
             imageLabel.setIcon(ii);
-            contentPane.add(imageLabel, java.awt.BorderLayout.CENTER);
-            // show it
-            this.setLocationRelativeTo(null);
-            this.setVisible(true);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+            imagePanel.add(imageLabel);
+            this.add(imagePanel, java.awt.BorderLayout.CENTER);
+
     }
 
     public static void main(String[] args) {
-        new LoadingPanel();
+    	     
+		JFrame fenetre = new JFrame ("Trivia DataDiscovery");
+		fenetre.setSize(500, 230);
+		fenetre.setResizable(false);
+		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		fenetre.setTitle("Trivia DataDiscovery");
+		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
+	
+		fenetre.setVisible(true);
+		
+
+
     }
 
 }

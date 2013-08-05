@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import com.mysql.jdbc.Connection;
 
 import javax.swing.*;
@@ -280,7 +281,9 @@ public class ConnexionPanel extends JPanel implements ActionListener {
 		}
 		
 		if (e.getSource() == this.getNext() ){
+
 			this.getControleur().showImp();
+
 		}
 		 
 	}

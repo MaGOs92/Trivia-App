@@ -1,12 +1,23 @@
 package Modele;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.mysql.jdbc.Connection;
+
 public class Colonne {
 	
 	private boolean selectionnee;
 	
 	private int id;
 	
+	private Connection co;
+	
+	private String nomTable;
+	
 	private Mapping mapping;
+	
+	private boolean keepOrRemove; // Keep = true, Remove = false
 	
 	private int nbLignesTotales;
 
@@ -26,9 +37,13 @@ public class Colonne {
 	
 	private String[] valeursListe;
 	
-	Colonne(int id, String nomColonne, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes, String[] valeursListe){
+	private String[] valeursListeSelectionnees;
+	
+	Colonne(int id, Connection co, String nomColonne, String nomTable, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes, String[] valeursListe){
 		this.setId(id);
+		this.setCo(co);
 		this.setNomColonne(nomColonne);
+		this.setNomTable(nomTable);
 		this.setTypeDeDonnee(typeDeDonnee);
 		this.setNbLignesTotales(nbLignesTotales);
 		this.setNbCasesRemplies(nbCasesRemplies);
@@ -38,6 +53,7 @@ public class Colonne {
 		this.setSelectionnee(false);
 		this.setMapping(new Mapping(0, "None"));
 		this.setPourcentagesCasesRemplies(this.calculerPoucentage());
+		System.out.println(getNomTable());
 	}
 	
 	public String toString(){
@@ -70,6 +86,105 @@ public class Colonne {
 		return valeursFrequentes;
 	}
 	
+	public int calculerKeep(){
+		
+
+		int nbValeursIncorrectes = 0;
+		
+		String sql = "select count(" + getNomColonne() + ") as cnt ";
+		
+				sql +=	"from " + getNomTable() + " ";
+				
+				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
+					sql += "WHERE " + getNomColonne() + " != " + getValeursListeSelectionnees()[i];
+				}
+				
+				System.out.println(sql);
+
+		
+		ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);
+		
+			
+		try {
+			while(resultat.next()){
+					
+				nbValeursIncorrectes += resultat.getInt(1);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				if (nbValeursIncorrectes >= getNbCasesRemplies()){
+					nbValeursIncorrectes = getNbCasesRemplies();
+				}				
+			
+				return nbValeursIncorrectes;
+				
+			}
+	
+	public int calculerRemove(){
+		
+		int nbValeursIncorrectes = 0;
+		
+		String sql = "select count(" + getNomColonne() + ") as cnt ";
+		
+				sql +=	"from " + getNomTable() + " ";
+				
+				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
+					sql += "WHERE " + getNomColonne() + " = " + getValeursListeSelectionnees()[i];
+				}
+				
+				System.out.println(sql);
+		
+		ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);
+		
+			
+		try {
+			while(resultat.next()){
+					
+				nbValeursIncorrectes += resultat.getInt(1);
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				if (nbValeursIncorrectes >= getNbCasesRemplies()){
+					nbValeursIncorrectes = getNbCasesRemplies();
+				}				
+			
+				return nbValeursIncorrectes;
+		
+	}
+
+
+	
+	
+	public boolean isKeepOrRemove() {
+		return keepOrRemove;
+	}
+
+	public void setKeepOrRemove(boolean keepOrRemove) {
+		this.keepOrRemove = keepOrRemove;
+	}
+
+	public String[] getValeursListeSelectionnees() {
+		return valeursListeSelectionnees;
+	}
+
+	public void setValeursListeSelectionnees(String[] valeursListeSelectionnees) {
+		this.valeursListeSelectionnees = valeursListeSelectionnees;
+	}
+
+	public String getNomTable() {
+		return nomTable;
+	}
+
+	public void setNomTable(String nomTable) {
+		this.nomTable = nomTable;
+	}
+
 	public String[] getValeursListe() {
 		return valeursListe;
 	}
@@ -78,7 +193,14 @@ public class Colonne {
 		this.valeursListe = valeursListe;
 	}
 	
-	
+
+	public Connection getCo() {
+		return co;
+	}
+
+	public void setCo(Connection co) {
+		this.co = co;
+	}
 
 	public int getNbLignesTotales() {
 		return nbLignesTotales;

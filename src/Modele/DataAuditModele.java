@@ -213,8 +213,10 @@ public class DataAuditModele {
 	if (this.getMetadata().getColumnTypeName(index) == "VARCHAR")
 	{
 		while(resultat.next() && i < 25){
-			valeursListe[i] = resultat.getString(1);
-			i++;
+			if (resultat.getString(1) != ""){
+				valeursListe[i] = resultat.getString(1);
+				i++;
+			}
 		}
 	}
 	else
@@ -237,7 +239,9 @@ public class DataAuditModele {
 		for (int i = 0; i < this.getNbColonnesTotales() ; i++)
 		{ 			
 			tabColonne [i] = new Colonne(i + 1,
-										this.getMetadata().getColumnName(i+1), 
+										this.getConnexion(),										
+										this.getMetadata().getColumnName(i+1),
+										this.getNomTable(),
 										this.getMetadata().getColumnTypeName(i+1), 
 										this.getNbLignesTotales() - this.nbLignesVides(i+1),
 										this.nbLignesVides(i+1),

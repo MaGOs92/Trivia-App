@@ -68,6 +68,9 @@ public class DataAuditPanel extends JPanel {
 	JButton repporting;
 	JButton selectAll;
 	JButton deselectAll;
+	JLabel LKeepTable;
+	JCheckBox CBKeepTable;
+	JButton back;
 	
 	JPanel panelMapping2;
 	
@@ -599,13 +602,17 @@ public class DataAuditPanel extends JPanel {
 		panelContainer.add(panelMapping, BorderLayout.CENTER);
 		//panelContainer.add(valeursfrequentes, BorderLayout.SOUTH);
 		
-		// Construction du JPanel repporting
+		// Construction du JPanel de boutons
 		
 		pRepporting = new JPanel();
+		
+		back = new JButton("< Back");
+		back.addActionListener(new EcouteurBouton(this));
+		pRepporting.add(back);
+		
 		repporting = new JButton("Edit Repporting");
 		selectAll = new JButton("Select all");
-		deselectAll = new JButton("Deselect all");
-		
+		deselectAll = new JButton("Deselect all");		
 		
 		pRepporting.setLayout(new FlowLayout());
 		selectAll.addActionListener(new EcouteurBouton(this));
@@ -617,6 +624,14 @@ public class DataAuditPanel extends JPanel {
 		repporting.addActionListener(new EcouteurBouton(this));
 		repporting.setEnabled(false);
 		pRepporting.add(repporting);
+		
+		LKeepTable = new JLabel("Keep table after use :");
+		pRepporting.add(LKeepTable);
+		
+		CBKeepTable = new JCheckBox();
+		pRepporting.add(CBKeepTable);
+		
+		
 		
 		// Population de la fenetre
 		

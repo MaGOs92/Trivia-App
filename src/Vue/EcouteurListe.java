@@ -1,5 +1,7 @@
 package Vue;
 
+import java.util.List;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -50,6 +52,29 @@ public class EcouteurListe implements ListSelectionListener {
 			
 			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
+		}
+		
+		else if (source == vue.getListVF()){
+			
+			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
+			
+			int [] selectedInd = vue.getListVF().getSelectedIndices();
+			String [] selectedString = new String[selectedInd.length];
+			for (int i = 0; i < selectedInd.length; i++) {
+				      selectedString[i] = vue.getListVF().getModel().getElementAt(selectedInd[i]);
+				}
+			
+			if (vue.keep.isSelected()){
+				colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectes() + colonneChoisie.calculerKeep());
+			}
+			else
+				colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectes() + colonneChoisie.calculerRemove());
+					
+			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
+			
+			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
+			
 			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
 		}
 		

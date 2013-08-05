@@ -12,12 +12,20 @@ import Vue.DataAuditPanel;
 public class DataAuditControleur {
 	
 	Connection co;
-	
+	CoImpControleur coImpControler;
 	JFrame fenetre;
 	DataAuditPanel DAPanel;
 	DataAuditModele DAModele;
 	String pathFichier;
 	
+	public CoImpControleur getCoImpControler() {
+		return coImpControler;
+	}
+
+	public void setCoImpControler(CoImpControleur coImpControler) {
+		this.coImpControler = coImpControler;
+	}
+
 	public String getPathFichier() {
 		return pathFichier;
 	}
@@ -58,7 +66,9 @@ public class DataAuditControleur {
 		DAModele = dAModele;
 	}
 
-	DataAuditControleur(Connection co, DataAuditModele DAModele, String pathFichier){
+	DataAuditControleur(CoImpControleur coImpControler, Connection co, DataAuditModele DAModele, String pathFichier){
+		
+		this.setCoImpControler(coImpControler);
 		
 		this.setCo(co);
 		

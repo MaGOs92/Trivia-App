@@ -58,6 +58,7 @@ public void actionPerformed(ActionEvent e){
 		vue.getRepporting().setEnabled(true);
 	
 	}
+	
 
 	}
 
@@ -88,7 +89,7 @@ class MyCellRenderer extends JLabel implements ListCellRenderer<Colonne> {
 	        
 	        for (int i = 0; i < arg0.getModel().getSize() ; i++){
 	        	if (arg1.isSelectionnee())
-	        		foreground = Color.GREEN;
+	        		foreground = Color.BLUE;
 	        }
 	        
 	        setForeground(foreground);

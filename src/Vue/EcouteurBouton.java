@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import Modele.ImportationModele;
+
 public class EcouteurBouton implements ActionListener {
 	
 	DataAuditPanel vue;
@@ -23,7 +25,7 @@ public void actionPerformed(ActionEvent e){
 				vue.getListeColonne().setSelectedIndex(i);
 				vue.getListeColonne().getSelectedValue().setSelectionnee(true);
 				vue.getSelectValue().setSelected(vue.getListeColonne().getSelectedValue().isSelectionnee());
-				vue.getListeColonne().setForeground( Color.GREEN );
+				vue.getListeColonne().setForeground( Color.BLUE );
 			}
 
 			vue.getlListeColonne().setText("Number of values selected : " + vue.getDAcontroller().getDAModele().getNbLignesSelectionnee());
@@ -59,9 +61,19 @@ public void actionPerformed(ActionEvent e){
 					null, options, options[0]);
 			
 			if (option == JOptionPane.YES_OPTION){
+				if (!vue.CBKeepTable.isSelected()){
+					ImportationModele.deleteTable(vue.getDAcontroller().getCo() , vue.getDAcontroller().getDAModele().getNomTable());
+				}
 				System.exit(0);
 			}
 
+		}
+		
+		else if (source == vue.back){
+			
+			vue.getDAcontroller().getFenetre().setVisible(false);
+			vue.getDAcontroller().getCoImpControler().showImp();
+			
 		}
 		
 	}
