@@ -1,27 +1,11 @@
 package Vue;
 
 import java.awt.BorderLayout;
-
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Vector;
-
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-
-
-
 import Controleur.DataAuditControleur;
 import Modele.Colonne;
-import Modele.DataAuditModele;
 import Modele.Mapping;
 
 
@@ -54,6 +38,8 @@ public class DataAuditPanel extends JPanel {
 	JLabel emptyEntries;
 	JLabel lMappingValue;
 	JLabel mappingValue;
+	JLabel lClasseValue;
+	JLabel classeValue;
 	JLabel lIncorrectEntries;
 	JLabel incorrectEntries;
 	JLabel lSelectValue;
@@ -80,6 +66,67 @@ public class DataAuditPanel extends JPanel {
 	
 	
 	
+	
+	public JLabel getlClasseValue() {
+		return lClasseValue;
+	}
+
+
+
+	public void setlClasseValue(JLabel lClasseValue) {
+		this.lClasseValue = lClasseValue;
+	}
+
+
+
+	public JLabel getClasseValue() {
+		return classeValue;
+	}
+
+
+
+	public void setClasseValue(JLabel classeValue) {
+		this.classeValue = classeValue;
+	}
+
+
+
+	public JLabel getLKeepTable() {
+		return LKeepTable;
+	}
+
+
+
+	public void setLKeepTable(JLabel lKeepTable) {
+		LKeepTable = lKeepTable;
+	}
+
+
+
+	public JCheckBox getCBKeepTable() {
+		return CBKeepTable;
+	}
+
+
+
+	public void setCBKeepTable(JCheckBox cBKeepTable) {
+		CBKeepTable = cBKeepTable;
+	}
+
+
+
+	public JButton getBack() {
+		return back;
+	}
+
+
+
+	public void setBack(JButton back) {
+		this.back = back;
+	}
+
+
+
 	public JLabel getlListeColonne() {
 		return lListeColonne;
 	}
@@ -538,6 +585,12 @@ public class DataAuditPanel extends JPanel {
 		lMappingValue.setLabelFor(mappingValue);
 		panelMapping.add(mappingValue);
 		
+		lClasseValue = new JLabel("Class :", JLabel.TRAILING);
+		panelMapping.add(lClasseValue);
+		classeValue = new JLabel("");
+		lClasseValue.setLabelFor(classeValue);
+		panelMapping.add(classeValue);
+		
 		lIncorrectEntries = new JLabel("Number of incorrect values :", JLabel.TRAILING);
 		panelMapping.add(lIncorrectEntries);
 		incorrectEntries = new JLabel("");
@@ -551,7 +604,7 @@ public class DataAuditPanel extends JPanel {
 		panelMapping.add(pourcentage);
 		
 		
-		lChoixRadio = new JLabel("Keep or remove selected field :", JLabel.TRAILING);
+		lChoixRadio = new JLabel("Keep or remove selected values :", JLabel.TRAILING);
 		panelMapping.add(lChoixRadio);
 		JPanel pRadio = new JPanel(new BorderLayout());
 		keep = new JRadioButton("Keep");
@@ -559,6 +612,9 @@ public class DataAuditPanel extends JPanel {
 		choixRadio = new ButtonGroup();
 		choixRadio.add(keep);
 		choixRadio.add(remove);
+		keep.addActionListener(new EcouteurBouton(this));
+		remove.addActionListener(new EcouteurBouton(this));
+		remove.isSelected();
 		pRadio.add(keep, BorderLayout.CENTER);
 		pRadio.add(remove, BorderLayout.WEST);
 		panelMapping.add(pRadio);
@@ -593,7 +649,7 @@ public class DataAuditPanel extends JPanel {
 		
 		//Lay out the panel.
 		SpringUtilities.makeCompactGrid(panelMapping,
-		                                10, 2, //rows, cols
+		                                11, 2, //rows, cols
 		                                10, 10,        //initX, initY
 		                                10, 10);       //xPad, yPad
 		

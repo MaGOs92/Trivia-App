@@ -160,9 +160,7 @@ public class ImportationPanel extends JPanel implements ActionListener {
 		 }
 		 
 		 else if (ae.getSource() == this.getDataAudit()){
-			 
-			this.getController().loading();
-
+			
 			try{
 			this.getController().lancerDataAudit();
 			} catch (IOException e) {

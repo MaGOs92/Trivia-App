@@ -29,9 +29,17 @@ public class DataAuditModele {
 	
 	private Mapping[] tabMapping;
 	
+	private String nomClient;
 	
 	
-	
+	public String getNomClient() {
+		return nomClient;
+	}
+
+	public void setNomClient(String nomClient) {
+		this.nomClient = nomClient;
+	}
+
 	public Mapping[] getTabMapping() {
 		return tabMapping;
 	}

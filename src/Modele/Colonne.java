@@ -17,6 +17,8 @@ public class Colonne {
 	
 	private Mapping mapping;
 	
+	private String classe;
+	
 	private boolean keepOrRemove; // Keep = true, Remove = false
 	
 	private int nbLignesTotales;
@@ -26,6 +28,10 @@ public class Colonne {
 	private String typeDeDonnee;
 	
 	private int nbCasesIncorrectes;
+	
+	private int nbCasesIncorrectesMapping;
+	
+	private int nbCasesIncorrectesKR;
 	
 	private int nbCasesRemplies;
 	
@@ -53,7 +59,8 @@ public class Colonne {
 		this.setSelectionnee(false);
 		this.setMapping(new Mapping(0, "None"));
 		this.setPourcentagesCasesRemplies(this.calculerPoucentage());
-		System.out.println(getNomTable());
+		this.setKeepOrRemove(false);
+		this.setClasse("None");
 	}
 	
 	public String toString(){
@@ -89,6 +96,7 @@ public class Colonne {
 	public int calculerKeep(){
 		
 
+		this.setNbCasesIncorrectesKR(0);
 		int nbValeursIncorrectes = 0;
 		
 		String sql = "select count(" + getNomColonne() + ") as cnt ";
@@ -96,32 +104,35 @@ public class Colonne {
 				sql +=	"from " + getNomTable() + " ";
 				
 				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
-					sql += "WHERE " + getNomColonne() + " != " + getValeursListeSelectionnees()[i];
+					if (i == 0){
+					sql += "WHERE " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
+					}
+					else
+						sql += " OR " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
 				}
 				
-				System.out.println(sql);
+		System.out.println(sql);
 
 		
 		ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);
 		
 			
 		try {
-			while(resultat.next()){
-					
+			while(resultat.next()){					
 				nbValeursIncorrectes += resultat.getInt(1);
-					}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				if (nbValeursIncorrectes >= getNbCasesRemplies()){
-					nbValeursIncorrectes = getNbCasesRemplies();
-				}				
-			
-				return nbValeursIncorrectes;
-				
 			}
+		} catch (SQLException e) {
+					// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		if (nbValeursIncorrectes >= getNbCasesRemplies()){
+			nbValeursIncorrectes = getNbCasesRemplies();
+		}				
+			
+		return this.getNbCasesRemplies() - nbValeursIncorrectes;
+				
+		}
 	
 	public int calculerRemove(){
 		
@@ -132,7 +143,11 @@ public class Colonne {
 				sql +=	"from " + getNomTable() + " ";
 				
 				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
-					sql += "WHERE " + getNomColonne() + " = " + getValeursListeSelectionnees()[i];
+					if (i == 0){
+					sql += "WHERE " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
+					}
+					else
+						sql += "OR " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
 				}
 				
 				System.out.println(sql);
@@ -141,26 +156,50 @@ public class Colonne {
 		
 			
 		try {
-			while(resultat.next()){
-					
+			while(resultat.next()){	
 				nbValeursIncorrectes += resultat.getInt(1);
-					}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+			} 
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
 				
-				if (nbValeursIncorrectes >= getNbCasesRemplies()){
-					nbValeursIncorrectes = getNbCasesRemplies();
-				}				
+		if (nbValeursIncorrectes >= getNbCasesRemplies()){
+			nbValeursIncorrectes = getNbCasesRemplies();
+			}				
 			
-				return nbValeursIncorrectes;
+		return nbValeursIncorrectes;
 		
 	}
 
 
 	
 	
+	public String getClasse() {
+		return classe;
+	}
+
+	public void setClasse(String classe) {
+		this.classe = classe;
+	}
+
+	public int getNbCasesIncorrectesMapping() {
+		return nbCasesIncorrectesMapping;
+	}
+
+	public void setNbCasesIncorrectesMapping(int nbCasesIncorrectesMapping) {
+		this.nbCasesIncorrectesMapping = nbCasesIncorrectesMapping;
+	}
+
+	public int getNbCasesIncorrectesKR() {
+		return nbCasesIncorrectesKR;
+	}
+
+	public void setNbCasesIncorrectesKR(int nbCasesIncorrectesKR) {
+		this.nbCasesIncorrectesKR = nbCasesIncorrectesKR;
+	}
+
 	public boolean isKeepOrRemove() {
 		return keepOrRemove;
 	}

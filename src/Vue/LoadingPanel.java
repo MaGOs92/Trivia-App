@@ -1,39 +1,25 @@
 package Vue;
-
-import java.awt.*;
-
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
 
+import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 
-import Controleur.CoImpControleur;
-
-public class LoadingPanel extends JPanel {
+public class LoadingPanel extends JFrame {
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	JPanel imagePanel = new JPanel(new FlowLayout());
+	JPanel imagePanel = new JPanel();
     JLabel imageLabel = new JLabel();
-    JPanel headerPanel = new JPanel(new FlowLayout());
+    JPanel headerPanel = new JPanel();
     JLabel headerLabel = new JLabel();
-    CoImpControleur controller;
+    Box boite;
     
-    
-    
-    
-	public CoImpControleur getController() {
-		return controller;
-	}
-
-	public void setController(CoImpControleur controller) {
-		this.controller = controller;
-	}
-
 	public JPanel getImagePanel() {
 		return imagePanel;
 	}
@@ -66,38 +52,33 @@ public class LoadingPanel extends JPanel {
 		this.headerLabel = headerLabel;
 	}
 
-	public LoadingPanel(CoImpControleur controller) {
+	public LoadingPanel() {
         	
-        	this.setController(controller);
-        	
-        	this.setLayout(new BorderLayout());
+     		setTitle("In process");
+    		setIconImage(Toolkit.getDefaultToolkit().getImage("Img\\icone.png")); 
+    		
+     		boite = Box.createVerticalBox();
+    		
+     		this.setLayout(new BorderLayout());
            
             // add the header label
             headerLabel.setText("Loading ...");
             headerPanel.add(headerLabel);
-            this.add(headerPanel, java.awt.BorderLayout.NORTH);
+            boite.add(headerPanel, BorderLayout.NORTH);
             
             // add the image label
             ImageIcon ii = new ImageIcon("Img\\loader.gif");
             imageLabel.setIcon(ii);
             imagePanel.add(imageLabel);
-            this.add(imagePanel, java.awt.BorderLayout.CENTER);
+            boite.add(imagePanel, BorderLayout.CENTER);
+            
+            this.add(boite);
+            
+    		pack();
+    		setLocationRelativeTo(null);
+    		setResizable(false);
+    		setVisible(false);
 
     }
-
-    public static void main(String[] args) {
-    	     
-		JFrame fenetre = new JFrame ("Trivia DataDiscovery");
-		fenetre.setSize(500, 230);
-		fenetre.setResizable(false);
-		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fenetre.setTitle("Trivia DataDiscovery");
-		fenetre.setLocationRelativeTo(null); // Place la fenetre au milieu de l'écran
 	
-		fenetre.setVisible(true);
-		
-
-
-    }
-
 }

@@ -104,21 +104,39 @@ public class PDFGraphiques {
     	
     		String valeursSelectionnees = "";
     		
-    		int nbValeurRempliesS = 0;
+    		float nbValeurRempliesFichier = 0;
     		
-    		int nbValeurRempliesF = 0;
+    		float nbValeurRempliesSelection = 0;
+    		
+    		float nbValeurTotalesFichier = model.getNbColonnesTotales() * model.getNbLignesTotales();
+    		
+    		float nbValeurTotalesSelection = model.getNbLignesSelectionnee() * model.getNbLignesTotales();
+    		
     		
             for (int i = 0; i < model.getNbColonnesTotales(); i++){
-            	nbValeurRempliesS = nbValeurRempliesS + model.getTabColonne()[i].getNbCasesRemplies();
+            	nbValeurRempliesFichier += model.getTabColonne()[i].getNbCasesRemplies();
             }
+            
+            float pourcentageRemplissageFichier = (nbValeurRempliesFichier / nbValeurTotalesFichier) * 100;
+            System.out.println(nbValeurRempliesFichier);
+            System.out.println(nbValeurTotalesFichier);
+            System.out.println(pourcentageRemplissageFichier);
     		
             for (int i = 0; i < model.getNbColonnesTotales(); i++){
             	if (model.getTabColonne()[i].isSelectionnee()){
-            		valeursSelectionnees += model.getTabColonne()[i].getNomColonne() + "\t";
-            		nbValeurRempliesF = nbValeurRempliesF + model.getTabColonne()[i].getNbCasesRemplies();
+            		if (i == model.getNbColonnesTotales() - 1)
+            			valeursSelectionnees += model.getTabColonne()[i].getNomColonne();
+            		else
+            			valeursSelectionnees += model.getTabColonne()[i].getNomColonne() + " / ";
+            		
+            		nbValeurRempliesSelection += model.getTabColonne()[i].getNbCasesRemplies();
             	}
             }
             
+            float pourcentageRemplissageSelection = (nbValeurRempliesSelection / nbValeurTotalesSelection) * 100;
+            System.out.println(nbValeurRempliesSelection);
+            System.out.println(nbValeurTotalesSelection);
+            System.out.println(pourcentageRemplissageSelection);
     	
     		Image image = com.lowagie.text.Image.getInstance("Img\\trivia.jpg");
     		document.add(image);
@@ -141,12 +159,13 @@ public class PDFGraphiques {
     	    
     	    addEmptyLine(preface, 1);
     	    preface.add(new Paragraph("Audited file : " + model.getNomTable() +
+    	    		"\n Customer : " + model.getNomClient() +
     	    		"\n Total number of fields : " + model.getNbColonnesTotales() +
     	    		"\n Total number of entries : " + model.getNbLignesTotales() +
-    	    		"\n File's fill rate : " + (nbValeurRempliesF / (model.getNbColonnesTotales() * model.getNbLignesTotales())) * 100 + " %" +
-    	    		"\n Selected values's fill rate : " + (nbValeurRempliesS / (model.getNbLignesSelectionnee() * model.getNbLignesTotales())) * 100 + " %" +
+    	    		"\n File's fill rate : " + pourcentageRemplissageFichier + " %" +
+    	    		"\n Selected values's fill rate : " + pourcentageRemplissageSelection + " %" +
     	    		"\n Number of selected values : " + model.getNbLignesSelectionnee() +
-    	    		"\n Values : " + valeursSelectionnees,smallBold));
+    	    		"\n Selected values : " + valeursSelectionnees,smallBold));
     	    
     	    document.add(preface);
     	    
@@ -228,9 +247,10 @@ public class PDFGraphiques {
         
 	    addEmptyLine(subPara, 2);
         
-	    subPara.add(new Paragraph("Value name : " + colonne.getNomColonne() +
+	    subPara.add(new Paragraph("Field name : " + colonne.getNomColonne() +
 	    		"\n Storage : " + colonne.getTypeDeDonnee() +
-        		"\n Mapping value : " + colonne.getMapping().getNom() + 
+        		"\n Mapping value : " + colonne.getMapping().getNom() +
+        		"\n Class : " + colonne.getClasse() +
         		"\n Number of filled entries : " + colonne.getNbCasesRemplies() + 
         		"\n Number of empty entries : " + colonne.getNbCasesVides() + 
         		"\n Number of incorrect entries : " + colonne.getNbCasesIncorrectes() +

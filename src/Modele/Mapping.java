@@ -2,8 +2,7 @@ package Modele;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import com.mysql.jdbc.Connection;
 
@@ -102,10 +101,13 @@ public class Mapping {
 		int nbValeursIncorrectes = 0;
 		
 		if (this.getId() == 0){
+			this.getColonne().setClasse("None");
 			return nbValeursIncorrectes;
 		}
 		// L' id doit être unique
 		else if (this.getId() == 1){
+			
+			this.getColonne().setClasse("Identifier");
 		
 		 String sql = "select count(" + colonne.getNomColonne() + ") as cnt ";
 			sql +=	"from " + nomTable + " ";
@@ -135,8 +137,13 @@ public class Mapping {
 			return nbValeursIncorrectes;
 			
 		}
+		
+
+		
 		// Le pays ne doit pas contenir de chiffre et de ponctuation
 		else if (this.getId() == 2){
+			
+			this.getColonne().setClasse("Indicator");
 			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
@@ -173,6 +180,9 @@ public class Mapping {
 		}
 		// L'entreprise ne doit pas contenir de ponctuation
 		else if (this.getId() == 3){
+			
+			this.getColonne().setClasse("Text");
+			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
 			}
@@ -209,22 +219,32 @@ public class Mapping {
 		// Adresse 1 ??
 		else if (this.getId() == 4){
 			
+			this.getColonne().setClasse("Text");
+			
 			System.out.println("Mapping value : adresse 1");
 			return nbValeursIncorrectes;
 		}
 		
 		// Adresse 2 ??
 		else if (this.getId() == 5){
+			
+			this.getColonne().setClasse("Text");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Adresse 3 ??
 		else if (this.getId() == 6){
+			
+			this.getColonne().setClasse("Text");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// La ville ne doit pas contenir de chiffre
 		else if (this.getId() == 7){
+			
+			this.getColonne().setClasse("Text");
 			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
@@ -258,6 +278,9 @@ public class Mapping {
 		}
 		// L'état ne doit pas contenir de chiffres
 		else if (this.getId() == 8){
+			
+			this.getColonne().setClasse("Indicator");
+			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
 			}
@@ -291,6 +314,9 @@ public class Mapping {
 		// Le zip code doit contenir des chiffres
 		
 		else if (this.getId() == 9){
+			
+			this.getColonne().setClasse("Code");
+			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
 			}
@@ -324,6 +350,8 @@ public class Mapping {
 		// Le num de téléphone doit contenir des chiffres
 		
 		else if (this.getId() == 10){
+			
+			this.getColonne().setClasse("Code");
 			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
@@ -359,6 +387,8 @@ public class Mapping {
 		// Website Regex Website
 		else if (this.getId() == 11){
 			
+			this.getColonne().setClasse("Text");
+			
 			if (this.getColonne().getTypeDeDonnee() == "INT"){
 				return this.getColonne().getNbCasesRemplies();
 			}
@@ -393,81 +423,129 @@ public class Mapping {
 		
 		// SIC4
 		else if (this.getId() == 12){
+			
+			this.getColonne().setClasse("Code");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// NAICS6
 		else if (this.getId() == 13){
+			
+			this.getColonne().setClasse("Code");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// NAF
 		else if (this.getId() == 14){
+			
+			this.getColonne().setClasse("Code");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// APE
 		else if (this.getId() == 15){
+			
+			this.getColonne().setClasse("Code");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Desc Industrie code
 		else if (this.getId() == 16){
+			
+			this.getColonne().setClasse("Code");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Employee at site
 		else if (this.getId() == 17){
+			
+			this.getColonne().setClasse("Quantity");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Employee total
 		else if (this.getId() == 18){
+			
+			this.getColonne().setClasse("Quantity");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Annual sales
 		else if (this.getId() == 19){
+			
+			this.getColonne().setClasse("Quantity");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// ID Contact
 		else if (this.getId() == 20){
+			
+			this.getColonne().setClasse("Identifier");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Title
 		else if (this.getId() == 21){
+			
+			this.getColonne().setClasse("Indicator");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Contact first name
 		else if (this.getId() == 22){
+			
+			this.getColonne().setClasse("Text");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Contact last name
 		else if (this.getId() == 23){
+			
+			this.getColonne().setClasse("Text");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Contact phone
 		else if (this.getId() == 24){
+			
+			this.getColonne().setClasse("Code");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Contact email
 		else if (this.getId() == 25){
+			
+			this.getColonne().setClasse("Text");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Internal marketability indicator
 		else if (this.getId() == 26){
+			
+			this.getColonne().setClasse("Indicator");
+			
 			return nbValeursIncorrectes;
 		}
 		
 		// Opt/Out flag
 		else{
+			
+			this.getColonne().setClasse("Indicator");
+			
 			return nbValeursIncorrectes;
 		}
 	}

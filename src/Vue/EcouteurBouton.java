@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+import Modele.Colonne;
 import Modele.ImportationModele;
 
 public class EcouteurBouton implements ActionListener {
@@ -20,7 +21,7 @@ public void actionPerformed(ActionEvent e){
 	
 	Object source = e.getSource();
 
-		if (source == vue.selectAll){
+		if (source == vue.getSelectAll()){
 			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++) {
 				vue.getListeColonne().setSelectedIndex(i);
 				vue.getListeColonne().getSelectedValue().setSelectionnee(true);
@@ -53,6 +54,31 @@ public void actionPerformed(ActionEvent e){
 				
 			String nomDuFichier = vue.getDAcontroller().getDAModele().nomDuFichierPDF(vue.getDAcontroller().getPathFichier());
 			
+			SaisieClient client = new SaisieClient(vue.getDAcontroller().getDAModele());
+			
+			int j = 0;
+			
+			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++){
+				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee() && vue.getDAcontroller().getDAModele().getTabColonne()[i].getClasse() == "None"){
+					j++;
+				}
+			}
+			
+			Colonne[] tabClasse = new Colonne[j];			
+			
+			j = 0;
+			
+			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++){
+				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee() && vue.getDAcontroller().getDAModele().getTabColonne()[i].getClasse() == "None"){
+					tabClasse[j] = vue.getDAcontroller().getDAModele().getTabColonne()[i];
+					j++;
+				}
+			}
+			
+			if (tabClasse.length != 0){
+				SaisieClasse classe = new SaisieClasse(tabClasse);
+			}
+			
 			Modele.PDFGraphiques.writeChartToPDF(nomDuFichier, vue.getDAcontroller().getDAModele());
 			
 			Object[] options = { "Exit the program", "Return to mapping menu" };
@@ -69,7 +95,30 @@ public void actionPerformed(ActionEvent e){
 
 		}
 		
-		else if (source == vue.back){
+		else if (source == vue.getKeep()){
+			
+			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
+			colonneChoisie.setKeepOrRemove(true);
+			colonneChoisie.setNbCasesIncorrectesKR(colonneChoisie.calculerKeep());
+			colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
+			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
+			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());	
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+			
+		}
+		
+		else if (source == vue.getRemove()){
+			
+			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
+			colonneChoisie.setKeepOrRemove(false);
+			colonneChoisie.setNbCasesIncorrectesKR(colonneChoisie.calculerRemove());
+			colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
+			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
+			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+		}
+		
+		else if (source == vue.getBack()){
 			
 			vue.getDAcontroller().getFenetre().setVisible(false);
 			vue.getDAcontroller().getCoImpControler().showImp();

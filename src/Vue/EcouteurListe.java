@@ -1,7 +1,5 @@
 package Vue;
 
-import java.util.List;
-
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -28,11 +26,20 @@ public class EcouteurListe implements ListSelectionListener {
 			vue.getFilledEntries().setText("" + colonneChoisie.getNbCasesRemplies());
 			vue.getEmptyEntries().setText("" + colonneChoisie.getNbCasesVides());
 			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
+			vue.getClasseValue().setText(colonneChoisie.getClasse());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
-			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
 			vue.getSelectValue().setSelected(colonneChoisie.isSelectionnee());
 			vue.getCBMapping().setSelectedIndex(colonneChoisie.getMapping().getId());
 			vue.getListVF().setListData(vue.getDAcontroller().getDAModele().getTabColonne()[vue.getListeColonne().getSelectedIndex()].getValeursListe());
+			if (colonneChoisie.isKeepOrRemove()){
+				vue.getKeep().setSelected(true);
+				vue.getRemove().setSelected(false);
+			}
+			else{
+				vue.getKeep().setSelected(false);
+				vue.getRemove().setSelected(true);
+			}
 			vue.panelMapping.setVisible(true);
 			vue.panelMapping2.setVisible(true);
 
@@ -51,13 +58,14 @@ public class EcouteurListe implements ListSelectionListener {
 			
 			
 			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
+			vue.getClasseValue().setText(colonneChoisie.getClasse());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
-			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
 		}
 		
 		else if (source == vue.getListVF()){
 			
-			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
+			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();			
 			
 			int [] selectedInd = vue.getListVF().getSelectedIndices();
 			String [] selectedString = new String[selectedInd.length];
@@ -65,17 +73,22 @@ public class EcouteurListe implements ListSelectionListener {
 				      selectedString[i] = vue.getListVF().getModel().getElementAt(selectedInd[i]);
 				}
 			
-			if (vue.keep.isSelected()){
-				colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectes() + colonneChoisie.calculerKeep());
+			colonneChoisie.setValeursListeSelectionnees(selectedString);
+			
+			if (colonneChoisie.isKeepOrRemove()){
+				colonneChoisie.setNbCasesIncorrectesKR(colonneChoisie.calculerKeep());
+				colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
 			}
-			else
-				colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectes() + colonneChoisie.calculerRemove());
+			else{
+				colonneChoisie.setNbCasesIncorrectesKR(colonneChoisie.calculerRemove());
+				colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
+			}
 					
 			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 			
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
 			
-			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies());
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
 		}
 		
 	}
