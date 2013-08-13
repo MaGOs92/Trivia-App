@@ -179,10 +179,10 @@ public class ImportationModele {
 				champs += "ID INTEGER NOT NULL PRIMARY KEY, ";
 			}*/
 			if (i == type.length - 1){
-				champs += nomTable[i] + " " + type[i];
+				champs += "`" + nomTable[i] + "` " + type[i];
 			}
 			else
-				champs += nomTable[i] + " " + type[i] + ", ";
+				champs += "`" + nomTable[i] + "` " + type[i] + ", ";
 		
 		System.out.println(champs);
 		
@@ -202,13 +202,13 @@ public class ImportationModele {
 		  
 		  for (int i = 0 ; i < noms.length ; i++){
 			  			  
-				noms[i] = noms[i].replaceAll("\\W","");
+				//noms[i] = noms[i].replaceAll("\\W","");
 				
-				 if (noms[i].length() > 60){
-					  noms[i] = noms[i].substring(0, 40);
+				 if (noms[i].length() > 64){
+					  noms[i] = noms[i].substring(0, 63);
 				  }
 				 
-				 noms[i] += "_" + i;
+				 //noms[i] += "_" + i;
 
 		  }		  
 		   
@@ -241,7 +241,7 @@ public class ImportationModele {
 	// Fonction de création de la table dans laquelle va être importé le fichier
 	public static void createTable(Connection co, String nomTable, String champs){
 		
-		String requeteCreationTable = "CREATE TABLE "+ nomTable +"(";
+		String requeteCreationTable = "CREATE TABLE " + nomTable + "(";
 		requeteCreationTable += champs;
 		requeteCreationTable += ")";
 		

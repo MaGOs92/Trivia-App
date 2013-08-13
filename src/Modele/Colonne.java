@@ -3,6 +3,10 @@ package Modele;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import Modele.Mapping.Classe;
+import Modele.Mapping.MappingINT;
+import Modele.Mapping.MappingString;
+
 import com.mysql.jdbc.Connection;
 
 public class Colonne {
@@ -15,11 +19,15 @@ public class Colonne {
 	
 	private String nomTable;
 	
-	private Mapping mapping;
+	private MappingString mappingString;
 	
-	private String classe;
+	private MappingINT mappingINT;
+	
+	private Classe classe;
 	
 	private boolean keepOrRemove; // Keep = true, Remove = false
+	
+	private boolean stringValues;
 	
 	private int nbLignesTotales;
 
@@ -57,10 +65,18 @@ public class Colonne {
 		this.setValeursFrequentes(valeursFrequentes);
 		this.setValeursListe(valeursListe);
 		this.setSelectionnee(false);
-		this.setMapping(new Mapping(0, "None"));
+		//this.setMapping(new Map(0, "None"));
 		this.setPourcentagesCasesRemplies(this.calculerPoucentage());
 		this.setKeepOrRemove(false);
-		this.setClasse("None");
+		this.setClasse(new Classe(0, "None"));
+		if (this.getTypeDeDonnee() == "INT"){
+			this.setStringValues(false);
+			this.setMappingINT(new MappingINT());
+		}
+		else{
+			this.setStringValues(true);
+			this.setMappingString(new MappingString());
+		}
 	}
 	
 	public String toString(){
@@ -99,16 +115,16 @@ public class Colonne {
 		this.setNbCasesIncorrectesKR(0);
 		int nbValeursIncorrectes = 0;
 		
-		String sql = "select count(" + getNomColonne() + ") as cnt ";
+		String sql = "select count(`" + getNomColonne() + "`) as cnt ";
 		
 				sql +=	"from " + getNomTable() + " ";
 				
 				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
 					if (i == 0){
-					sql += "WHERE " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
+					sql += "WHERE `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
 					}
 					else
-						sql += " OR " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
+						sql += " OR `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
 				}
 				
 		System.out.println(sql);
@@ -138,16 +154,16 @@ public class Colonne {
 		
 		int nbValeursIncorrectes = 0;
 		
-		String sql = "select count(" + getNomColonne() + ") as cnt ";
+		String sql = "select count(`" + getNomColonne() + "`) as cnt ";
 		
 				sql +=	"from " + getNomTable() + " ";
 				
 				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
 					if (i == 0){
-					sql += "WHERE " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
+					sql += "WHERE `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
 					}
 					else
-						sql += "OR " + getNomColonne() + " = '" + getValeursListeSelectionnees()[i] + "'";
+						sql += "OR `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
 				}
 				
 				System.out.println(sql);
@@ -176,11 +192,11 @@ public class Colonne {
 
 	
 	
-	public String getClasse() {
+	public Classe getClasse() {
 		return classe;
 	}
 
-	public void setClasse(String classe) {
+	public void setClasse(Classe classe) {
 		this.classe = classe;
 	}
 
@@ -257,12 +273,20 @@ public class Colonne {
 		this.id = id;
 	}
 
-	public Mapping getMapping() {
-		return mapping;
+	public MappingString getMappingString() {
+		return mappingString;
 	}
 
-	public void setMapping(Mapping mapping) {
-		this.mapping = mapping;
+	public void setMappingString(MappingString mappingString) {
+		this.mappingString = mappingString;
+	}
+
+	public MappingINT getMappingINT() {
+		return mappingINT;
+	}
+
+	public void setMappingINT(MappingINT mappingINT) {
+		this.mappingINT = mappingINT;
 	}
 
 	public int getNbCasesIncorrectes() {
@@ -328,5 +352,15 @@ public class Colonne {
 	public void setValeursFrequentes(String[] valeursFrequentes) {
 		this.valeursFrequentes = valeursFrequentes;
 	}
+
+	public boolean isStringValues() {
+		return stringValues;
+	}
+
+	public void setStringValues(boolean stringValues) {
+		this.stringValues = stringValues;
+	}
+	
+	
 	
 }

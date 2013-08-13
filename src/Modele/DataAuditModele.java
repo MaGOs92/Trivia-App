@@ -8,6 +8,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import Modele.Mapping.Classe;
+import Modele.Mapping.MappingINT;
+import Modele.Mapping.MappingString;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.mysql.jdbc.Connection;
@@ -27,25 +30,46 @@ public class DataAuditModele {
 	
 	private Colonne[] tabColonne;
 	
-	private Mapping[] tabMapping;
-	
 	private String nomClient;
 	
+	private MappingString[] tabMappingString;
 	
+	private MappingINT[] tabMappingINT;
+	
+	private Classe[] tabClasse;
+ 	
+	
+	
+	public Classe[] getTabClasse() {
+		return tabClasse;
+	}
+
+	public void setTabClasse(Classe[] tabClasse) {
+		this.tabClasse = tabClasse;
+	}
+
+	public MappingString[] getTabMappingString() {
+		return tabMappingString;
+	}
+
+	public void setTabMappingString(MappingString[] tabMappingString) {
+		this.tabMappingString = tabMappingString;
+	}
+
+	public MappingINT[] getTabMappingINT() {
+		return tabMappingINT;
+	}
+
+	public void setTabMappingINT(MappingINT[] tabMappingINT) {
+		this.tabMappingINT = tabMappingINT;
+	}
+
 	public String getNomClient() {
 		return nomClient;
 	}
 
 	public void setNomClient(String nomClient) {
 		this.nomClient = nomClient;
-	}
-
-	public Mapping[] getTabMapping() {
-		return tabMapping;
-	}
-
-	public void setTabMapping(Mapping[] tabMapping) {
-		this.tabMapping = tabMapping;
 	}
 
 	public Colonne[] getTabColonne() {
@@ -116,7 +140,11 @@ public class DataAuditModele {
 		
 		this.setTabColonne(this.remplissageColonne());
 		
-		this.setTabMapping(this.tabMapping());
+		this.setTabClasse(this.tabClasse());
+		
+		this.setTabMappingString(this.tabMappingString());
+		
+		this.setTabMappingINT(this.tabMappingINT());
 
 	}
 	
@@ -144,7 +172,7 @@ public class DataAuditModele {
 	// Fonction qui renvoit le nombre de lignes vides pour le champ passé en paramètre
 	public int nbLignesVides(int index) throws SQLException{
 		
-		String sqlVarchar = "SELECT COUNT(" + this.getMetadata().getColumnName(index) + ") FROM " + getNomTable() + " WHERE " + this.getMetadata().getColumnName(index) + " = ?";
+		String sqlVarchar = "SELECT COUNT(`" + this.getMetadata().getColumnName(index) + "`) FROM " + getNomTable() + " WHERE `" + this.getMetadata().getColumnName(index) + "` = ?";
 		
 		PreparedStatement preparedStatement = getConnexion().prepareStatement(sqlVarchar);
 		
@@ -164,10 +192,10 @@ public class DataAuditModele {
 	// Fonction qui renvoit les 3 valeurs les plus fréquentes pour le champ passé en paramètre
 	public String[] valeursFrequentes(int index) throws SQLException{
 		
-		 String sql = "select " + this.getMetadata().getColumnName(index) + ", count(" + this.getMetadata().getColumnName(index) + ") as cnt ";
+		 String sql = "select `" + this.getMetadata().getColumnName(index) + "`, count(`" + this.getMetadata().getColumnName(index) + "`) as cnt ";
 				sql +=	"from " + getNomTable() + " ";
-				sql +=	"group by " + this.getMetadata().getColumnName(index) + " ";
-				sql += "having count(" + this.getMetadata().getColumnName(index) + ") > 1 ";
+				sql +=	"group by `" + this.getMetadata().getColumnName(index) + "` ";
+				sql += "having count(`" + this.getMetadata().getColumnName(index) + "`) > 1 ";
 				sql +=	"order by cnt desc";
 		
 		ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
@@ -206,10 +234,10 @@ public class DataAuditModele {
 	// Tableau pour remplir la liste de valeurs fréquentes
 	public String[] valeursListe(int index) throws SQLException{
 		
-		 String sql = "select " + this.getMetadata().getColumnName(index) + ", count(" + this.getMetadata().getColumnName(index) + ") as cnt ";
+		 String sql = "select `" + this.getMetadata().getColumnName(index) + "`, count(`" + this.getMetadata().getColumnName(index) + "`) as cnt ";
 			sql +=	"from " + getNomTable() + " ";
-			sql +=	"group by " + this.getMetadata().getColumnName(index) + " ";
-			sql += "having count(" + this.getMetadata().getColumnName(index) + ") > 1 ";
+			sql +=	"group by `" + this.getMetadata().getColumnName(index) + "` ";
+			sql += "having count(`" + this.getMetadata().getColumnName(index) + "`) > 1 ";
 			sql +=	"order by cnt desc";
 	
 	ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
@@ -272,21 +300,78 @@ public class DataAuditModele {
 		return j;
 	}
 	
-	public Mapping[] tabMapping(){
+	public Classe[] tabClasse(){
 		
-		String[] nomMapping = {"None", "ID", "Country", "Company name", "Physical address L1", "Physical address L2", "Physical address L3",
-			"Physical city", "Physical state", "Zip postal code", "Phone number", "Website", "Industry code (Sic4)", "Industry code (NAICS6)", "Industry code (NAF)",
-			"Industry code (APE)", "Descr. Industry code", "Employee at site", "Employee total", "Annual sales", "ID contact", "Title", "Contact first name",
-			"Contact last name", "Contact phone", "Contact email", "Internal marketability indicator", "Opt/Out flag"
+		String[] nomClasse = {"None", "Identifier", "Indicator", "Quantity", "Date", "Text", "Code"
 		};
 		
-		Mapping[] tabMapping = new Mapping[nomMapping.length];
+		Classe[] tabClasse = new Classe[nomClasse.length];
 		
-		for (int i = 0; i < nomMapping.length; i ++){
-			tabMapping[i] = new Mapping(i, nomMapping[i]);
+		for (int i = 0; i < nomClasse.length; i ++){
+			tabClasse[i] = new Classe(i, nomClasse[i]);
 		}
 
-		return tabMapping;
+		return tabClasse;
+	}
+	
+	public MappingString[] tabMappingString(){
+		
+		MappingString[] tab = new MappingString[30];
+		
+		tab[0] = new MappingString(0, "None", this.getTabClasse()[0], this.getNomTable(), this.getConnexion());
+		tab[1] = new MappingString(1, "ID", this.getTabClasse()[1], this.getNomTable(), this.getConnexion());
+		tab[2] = new MappingString(2, "Country", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+		tab[3] = new MappingString(3, "Company name", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[4] = new MappingString(4, "Physical address L1", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[5] = new MappingString(5, "Physical address L2", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[6] = new MappingString(6, "Physical address L3", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[7] = new MappingString(7, "Physical city", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[8] = new MappingString(8, "Physical state", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+		tab[9] = new MappingString(9, "Zip postal code", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[10] = new MappingString(10, "Phone number", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[11] = new MappingString(11, "Employee at site", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[12] = new MappingString(12, "Employee total", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[13] = new MappingString(13, "Annual sales", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[14] = new MappingString(14, "Website", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[15] = new MappingString(15, "Industry code (NAF/APE)", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[16] = new MappingString(16, "Industry code (NACE)", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[17] = new MappingString(17, "Descr. Industry code", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[18] = new MappingString(18, "ID contact", this.getTabClasse()[1], this.getNomTable(), this.getConnexion());
+		tab[19] = new MappingString(19, "Title", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+		tab[20] = new MappingString(20, "Contact first name", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[21] = new MappingString(21, "Contact last name", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[22] = new MappingString(22, "Contact email", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[23] = new MappingString(23, "Internal marketability indicator", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+		tab[24] = new MappingString(24, "Opt/Out flag", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+		tab[25] = new MappingString(25, "Text", this.getTabClasse()[5], this.getNomTable(), this.getConnexion());
+		tab[26] = new MappingString(26, "Code", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[27] = new MappingString(27, "Date", this.getTabClasse()[4], this.getNomTable(), this.getConnexion());
+		tab[28] = new MappingString(28, "Indicator", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+		tab[29] = new MappingString(29, "Quantity", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		
+		return tab;
+	}
+	
+	public MappingINT[] tabMappingINT(){
+		
+		MappingINT[] tab = new MappingINT[13];
+		
+		tab[0] = new MappingINT(0, "None", this.getTabClasse()[0], this.getNomTable(), this.getConnexion());
+		tab[1] = new MappingINT(1, "ID", this.getTabClasse()[1], this.getNomTable(), this.getConnexion());
+		tab[2] = new MappingINT(2, "Zip postal code", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[3] = new MappingINT(3, "Phone number", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[4] = new MappingINT(4, "Industry code (Sic4)", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[5] = new MappingINT(5, "Industry code (NAICS)", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[6] = new MappingINT(6, "Employee at site", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[7] = new MappingINT(7, "Employee total", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[8] = new MappingINT(8, "Annual sales", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[9] = new MappingINT(9, "ID contact", this.getTabClasse()[1], this.getNomTable(), this.getConnexion());
+		tab[10] = new MappingINT(10, "Quantity", this.getTabClasse()[3], this.getNomTable(), this.getConnexion());
+		tab[11] = new MappingINT(11, "Code", this.getTabClasse()[6], this.getNomTable(), this.getConnexion());
+		tab[12] = new MappingINT(12, "Indicator", this.getTabClasse()[2], this.getNomTable(), this.getConnexion());
+
+		return tab;
+		
 	}
 	
 	public String[] dataAudit(){

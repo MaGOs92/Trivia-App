@@ -11,9 +11,6 @@ import Modele.Colonne;
 
 public class SaisieClasse extends JDialog implements ActionListener {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	Colonne[] colonnes;
@@ -286,15 +283,16 @@ public class SaisieClasse extends JDialog implements ActionListener {
  	
  	public void actionPerformed(ActionEvent evt) {
  		Object source = evt.getSource();
+ 		
  		if (source == valider) {
  			System.out.println("");
  			this.setCompteur(this.getCompteur() + 1);
  			if (this.getCompteur() == getColonnes().length){
- 				this.getColonnes()[this.getCompteur()].setClasse(this.getChoixRadio().getSelection().toString()); 				
+ 				//this.getColonnes()[this.getCompteur()].setClasse(this.getChoixRadio().getSelection().toString()); 				
  				dispose();
  			}
  			else{ 			
- 				this.getColonnes()[this.getCompteur()].setClasse(this.getChoixRadio().getSelection().toString());
+ 				//this.getColonnes()[this.getCompteur()].setClasse(this.getChoixRadio().getSelection().toString());
  				this.getBoite().removeAll();
  				this.getBoite().add(this.getPanneau()[this.getCompteur()]);
  				pack();

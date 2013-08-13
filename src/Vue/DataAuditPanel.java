@@ -6,7 +6,8 @@ import java.awt.FlowLayout;
 import javax.swing.*;
 import Controleur.DataAuditControleur;
 import Modele.Colonne;
-import Modele.Mapping;
+import Modele.Mapping.MappingINT;
+import Modele.Mapping.MappingString;
 
 
 public class DataAuditPanel extends JPanel {
@@ -26,8 +27,13 @@ public class DataAuditPanel extends JPanel {
 	JList<Colonne> listeColonne;
 	
 	JPanel panelMapping;
-	JLabel LMapping;
-	JList<Mapping> CBMapping;
+	JLabel LMappingString;
+	JLabel LMappingINT;
+	JList<MappingString> CBMappingString;
+	JList<MappingINT> CBMappingINT;
+	JButton triFourchette;
+	JTextField maxF;
+	JTextField minF;
 	JLabel lValue;
 	JLabel value;
 	JLabel lStorage;
@@ -58,17 +64,88 @@ public class DataAuditPanel extends JPanel {
 	JCheckBox CBKeepTable;
 	JButton back;
 	
-	JPanel panelMapping2;
+	JPanel panelMappingString;
+	JPanel panelMappingINT;
 	
 	JPanel VFLabelContainer;
 	JLabel lvaleursfrequentes;
 	JList<String> listVF;
 	
 	
-	
-	
+	public JTextField getMaxF() {
+		return maxF;
+	}
+
+
+
+	public void setMaxF(JTextField maxF) {
+		this.maxF = maxF;
+	}
+
+
+
+	public JTextField getMinF() {
+		return minF;
+	}
+
+
+
+	public void setMinF(JTextField minF) {
+		this.minF = minF;
+	}
+
+
+
+	public JButton getTriFourchette() {
+		return triFourchette;
+	}
+
+
+
+	public void setTriFourchette(JButton triFourchette) {
+		this.triFourchette = triFourchette;
+	}
+
+
+
+	public JLabel getLMappingINT() {
+		return LMappingINT;
+	}
+
+
+
+	public void setLMappingINT(JLabel lMappingINT) {
+		LMappingINT = lMappingINT;
+	}
+
+
+
 	public JLabel getlClasseValue() {
 		return lClasseValue;
+	}
+
+
+
+	public JList<MappingString> getCBMappingString() {
+		return CBMappingString;
+	}
+
+
+
+	public void setCBMappingString(JList<MappingString> cBMappingString) {
+		CBMappingString = cBMappingString;
+	}
+
+
+
+	public JList<MappingINT> getCBMappingINT() {
+		return CBMappingINT;
+	}
+
+
+
+	public void setCBMappingINT(JList<MappingINT> cBMappingINT) {
+		CBMappingINT = cBMappingINT;
 	}
 
 
@@ -161,13 +238,28 @@ public class DataAuditPanel extends JPanel {
 		this.lListeColonne = lListeColonne;
 	}
 
-	public JPanel getPanelMapping2() {
-		return panelMapping2;
+	public JPanel getPanelMappingString() {
+		return panelMappingString;
 	}
 
-	public void setPanelMapping2(JPanel panelMapping2) {
-		this.panelMapping2 = panelMapping2;
+
+
+	public void setPanelMappingString(JPanel panelMappingString) {
+		this.panelMappingString = panelMappingString;
 	}
+
+
+
+	public JPanel getPanelMappingINT() {
+		return panelMappingINT;
+	}
+
+
+
+	public void setPanelMappingINT(JPanel panelMappingINT) {
+		this.panelMappingINT = panelMappingINT;
+	}
+
 
 
 	public JLabel getlChoixRadio() {
@@ -418,10 +510,6 @@ public class DataAuditPanel extends JPanel {
 		this.deselectAll = deselectAll;
 	}
 
-	public void setCBMapping(JList<Mapping> cBMapping) {
-		CBMapping = cBMapping;
-	}
-
 	public DataAuditControleur getDAcontroller() {
 		return DAcontroller;
 	}
@@ -454,16 +542,12 @@ public class DataAuditPanel extends JPanel {
 		this.panelMapping = panelMapping;
 	}
 
-	public JLabel getLMapping() {
-		return LMapping;
+	public JLabel getLMappingString() {
+		return LMappingString;
 	}
 
-	public void setLMapping(JLabel lMapping) {
-		LMapping = lMapping;
-	}
-
-	public JList<Mapping> getCBMapping() {
-		return CBMapping;
+	public void setLMappingString(JLabel lMappingString) {
+		LMappingString = lMappingString;
 	}
 
 	public JButton getRepporting() {
@@ -478,7 +562,6 @@ public class DataAuditPanel extends JPanel {
 	public DataAuditPanel(DataAuditControleur DAcontroller){
 		
 		this.setDAcontroller(DAcontroller);
-		
 		this.setLayout(new BorderLayout());
 		// Construction des panels
 		setPanelColonnes(new JPanel());
@@ -525,35 +608,73 @@ public class DataAuditPanel extends JPanel {
 		getPanelColonnes().add(containerValuesList, BorderLayout.NORTH);
 		getPanelColonnes().add(listScroller, BorderLayout.CENTER);
 		
-		// Construction du panel mapping
-
-		panelMapping = new JPanel(new SpringLayout());
-		
-		panelMapping2 = new JPanel(new BorderLayout());
-		
-		
-		// Champ combo
-		LMapping = new JLabel("Mapping values :", JLabel.TRAILING);
-		panelMapping2.add(LMapping, BorderLayout.NORTH);
-		
-		String[] tabCombo = new String[this.getDAcontroller().getDAModele().getTabMapping().length];
-		
-		for (int i = 0; i < this.getDAcontroller().getDAModele().getTabMapping().length; i++){
-			tabCombo[i] = this.getDAcontroller().getDAModele().getTabMapping()[i].toString();
-		}
-		
-		CBMapping = new JList<Mapping>(getDAcontroller().getDAModele().getTabMapping());
-		CBMapping.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		CBMapping.setLayoutOrientation(JList.VERTICAL);
-		CBMapping.setVisibleRowCount(-1);
-		LMapping.setLabelFor(CBMapping);
-		CBMapping.addListSelectionListener(new EcouteurListe(this));
-		JScrollPane listScroller2 = new JScrollPane(CBMapping);
+		// Construction du panel mapping string
+	
+		panelMappingString = new JPanel(new BorderLayout());
+			
+		LMappingString = new JLabel("Mapping field :", JLabel.TRAILING);
+		panelMappingString.add(LMappingString, BorderLayout.NORTH);
+				
+		CBMappingString = new JList<MappingString>(getDAcontroller().getDAModele().getTabMappingString());
+		CBMappingString.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		CBMappingString.setLayoutOrientation(JList.VERTICAL);
+		CBMappingString.setVisibleRowCount(-1);
+		LMappingString.setLabelFor(CBMappingString);
+		CBMappingString.addListSelectionListener(new EcouteurListe(this));
+		JScrollPane listScroller2 = new JScrollPane(CBMappingString);
 		listScroller2.setPreferredSize(new Dimension(150, 500));
 		JPanel containerMapList = new JPanel(new FlowLayout());
-		containerMapList.add(LMapping);
-		panelMapping2.add(containerMapList, BorderLayout.NORTH);
-		panelMapping2.add(listScroller2, BorderLayout.CENTER);
+		containerMapList.add(LMappingString);
+		panelMappingString.add(containerMapList, BorderLayout.NORTH);
+		panelMappingString.add(listScroller2, BorderLayout.CENTER);
+		
+		
+		// Construction du panel mapping INT
+		
+		panelMappingINT = new JPanel(new BorderLayout());
+	
+		LMappingINT = new JLabel("Mapping values :", JLabel.TRAILING);
+		panelMappingINT.add(LMappingINT, BorderLayout.NORTH);
+				
+		CBMappingINT = new JList<MappingINT>(getDAcontroller().getDAModele().getTabMappingINT());
+		CBMappingINT.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		CBMappingINT.setLayoutOrientation(JList.VERTICAL);
+		CBMappingINT.setVisibleRowCount(-1);
+		LMappingINT.setLabelFor(CBMappingINT);
+		CBMappingINT.addListSelectionListener(new EcouteurListe(this));
+		JScrollPane listScroller3 = new JScrollPane(CBMappingINT);
+		listScroller3.setPreferredSize(new Dimension(150, 500));
+		JPanel containerMapList2 = new JPanel(new FlowLayout());
+		containerMapList2.add(LMappingINT);
+		panelMappingINT.add(containerMapList2, BorderLayout.NORTH);
+		panelMappingINT.add(listScroller3, BorderLayout.CENTER);
+		
+		JPanel minMaxPanel = new JPanel(new BorderLayout());
+		JPanel minP = new JPanel(new FlowLayout());
+		JPanel maxP = new JPanel(new FlowLayout());
+		JPanel filterB = new JPanel(new FlowLayout());
+				
+		JLabel minLabel = new JLabel("Minimum");
+		minF = new JTextField(15);
+		minP.add(minLabel);
+		minP.add(minF);
+		JLabel maxLabel = new JLabel("Maxmum");
+		maxF = new JTextField(15);
+		maxP.add(maxLabel);
+		maxP.add(maxF);
+		triFourchette = new JButton("Filter");
+		triFourchette.addActionListener(new EcouteurBouton(this));
+		filterB.add(triFourchette);
+		
+		minMaxPanel.add(minP, BorderLayout.NORTH);
+		minMaxPanel.add(maxP, BorderLayout.CENTER);
+		minMaxPanel.add(filterB, BorderLayout.SOUTH);
+		
+		panelMappingINT.add(minMaxPanel, BorderLayout.SOUTH);
+		
+		// Construction panel central
+		
+		panelMapping = new JPanel(new SpringLayout());
 		
 		lValue = new JLabel("Field :", JLabel.TRAILING);
 		panelMapping.add(lValue);
@@ -621,7 +742,6 @@ public class DataAuditPanel extends JPanel {
 				
 		// Valeurs fréquentes
 		
-
 		lvaleursfrequentes = new JLabel("Values : ");
 
 		panelMapping.add(lvaleursfrequentes);
@@ -694,13 +814,13 @@ public class DataAuditPanel extends JPanel {
 		this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		this.add(pInfo, BorderLayout.NORTH);
 		this.add(getPanelColonnes(), BorderLayout.WEST);
-		this.add(panelMapping2, BorderLayout.EAST);
-		panelMapping2.setVisible(false);
+		//this.add(panelMappingString, BorderLayout.EAST);
+		//panelMappingString.setVisible(false);
+		//this.add(panelMappingINT, BorderLayout.EAST);
+		//panelMappingINT.setVisible(false);
 		this.add(panelContainer, BorderLayout.CENTER);
 		panelMapping.setVisible(false);
 		this.add(pRepporting, BorderLayout.SOUTH);
-		//this.add(panelContainer, BorderLayout.CENTER);
-		//valeursfrequentes.setVisible(false);
 		
 	}
 	

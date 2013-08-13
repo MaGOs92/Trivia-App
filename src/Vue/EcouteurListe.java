@@ -1,10 +1,12 @@
 package Vue;
 
+import java.awt.BorderLayout;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import Modele.Colonne;
-import Modele.Mapping;
+import Modele.Mapping.MappingINT;
+import Modele.Mapping.MappingString;
 
 public class EcouteurListe implements ListSelectionListener {
 	
@@ -21,16 +23,31 @@ public class EcouteurListe implements ListSelectionListener {
 		if (source == vue.getListeColonne()){
 			
 			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
+
 			vue.getValue().setText(colonneChoisie.getNomColonne());
 			vue.getStorage().setText(colonneChoisie.getTypeDeDonnee());
 			vue.getFilledEntries().setText("" + colonneChoisie.getNbCasesRemplies());
 			vue.getEmptyEntries().setText("" + colonneChoisie.getNbCasesVides());
-			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
-			vue.getClasseValue().setText(colonneChoisie.getClasse());
+			if (colonneChoisie.isStringValues()){
+				vue.add(vue.panelMappingString, BorderLayout.EAST);
+				vue.panelMappingINT.setVisible(false);
+				vue.panelMappingString.setVisible(true);
+				vue.getMappingValue().setText(colonneChoisie.getMappingString().getNom());
+				vue.getCBMappingString().setSelectedIndex(colonneChoisie.getMappingString().getId());
+			}
+			
+			else{
+				vue.add(vue.panelMappingINT, BorderLayout.EAST);
+				vue.panelMappingString.setVisible(false);
+				vue.panelMappingINT.setVisible(true);
+				vue.getMappingValue().setText(colonneChoisie.getMappingINT().getNom());
+				vue.getCBMappingINT().setSelectedIndex(colonneChoisie.getMappingINT().getId());
+			}
+			
+			vue.getClasseValue().setText(colonneChoisie.getClasse().getNom());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
 			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
-			vue.getSelectValue().setSelected(colonneChoisie.isSelectionnee());
-			vue.getCBMapping().setSelectedIndex(colonneChoisie.getMapping().getId());
+			vue.getSelectValue().setSelected(colonneChoisie.isSelectionnee());			
 			vue.getListVF().setListData(vue.getDAcontroller().getDAModele().getTabColonne()[vue.getListeColonne().getSelectedIndex()].getValeursListe());
 			if (colonneChoisie.isKeepOrRemove()){
 				vue.getKeep().setSelected(true);
@@ -41,24 +58,43 @@ public class EcouteurListe implements ListSelectionListener {
 				vue.getRemove().setSelected(true);
 			}
 			vue.panelMapping.setVisible(true);
-			vue.panelMapping2.setVisible(true);
-
 		}
 		
-		else if (source == vue.getCBMapping()){
+		else if (source == vue.getCBMappingString()){
 			
 			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
-			Mapping mappingChoisi = vue.getCBMapping().getSelectedValue();
 			
-			colonneChoisie.setMapping(mappingChoisi);
+			MappingString mappingChoisi = vue.getCBMappingString().getSelectedValue();
 			
-			colonneChoisie.setNbCasesIncorrectes(mappingChoisi.CalculerValeursIncorrects(colonneChoisie, vue.getDAcontroller().getDAModele().getNomTable(), vue.getDAcontroller().getDAModele().getConnexion()));
+			colonneChoisie.setMappingString(mappingChoisi);
+			
+			mappingChoisi.arrayValeursIncorrects(colonneChoisie);
+			
+			colonneChoisie.setNbCasesIncorrectes(mappingChoisi.calculerValeursIncorrectes());
 			
 			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 			
+			vue.getMappingValue().setText(colonneChoisie.getMappingString().getNom());
+			vue.getClasseValue().setText(colonneChoisie.getClasse().getNom());
+			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
+			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+		}
+		
+		else if (source == vue.getCBMappingINT()){
 			
-			vue.getMappingValue().setText(colonneChoisie.getMapping().getNom());
-			vue.getClasseValue().setText(colonneChoisie.getClasse());
+			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();
+			MappingINT mappingChoisi = vue.getCBMappingINT().getSelectedValue();
+			
+			colonneChoisie.setMappingINT(mappingChoisi);
+			
+			mappingChoisi.arrayValeursIncorrects(colonneChoisie);
+			
+			colonneChoisie.setNbCasesIncorrectes(mappingChoisi.calculerValeursIncorrectes());
+			
+			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
+
+			vue.getMappingValue().setText(colonneChoisie.getMappingINT().getNom());
+			vue.getClasseValue().setText(colonneChoisie.getClasse().getNom());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
 			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
 		}

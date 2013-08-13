@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 
 import Modele.Colonne;
 import Modele.ImportationModele;
+import Modele.Mapping.MappingINT;
+import Modele.Mapping.MappingString;
 
 public class EcouteurBouton implements ActionListener {
 	
@@ -59,7 +61,7 @@ public void actionPerformed(ActionEvent e){
 			int j = 0;
 			
 			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++){
-				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee() && vue.getDAcontroller().getDAModele().getTabColonne()[i].getClasse() == "None"){
+				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee() && vue.getDAcontroller().getDAModele().getTabColonne()[i].getClasse().getId() == 0){
 					j++;
 				}
 			}
@@ -69,7 +71,7 @@ public void actionPerformed(ActionEvent e){
 			j = 0;
 			
 			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++){
-				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee() && vue.getDAcontroller().getDAModele().getTabColonne()[i].getClasse() == "None"){
+				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee() && vue.getDAcontroller().getDAModele().getTabColonne()[i].getClasse().getId() == 0){
 					tabClasse[j] = vue.getDAcontroller().getDAModele().getTabColonne()[i];
 					j++;
 				}
@@ -123,6 +125,39 @@ public void actionPerformed(ActionEvent e){
 			vue.getDAcontroller().getFenetre().setVisible(false);
 			vue.getDAcontroller().getCoImpControler().showImp();
 			
+		}
+		
+		else if (source == vue.getTriFourchette()){
+			
+			Colonne colonneChoisie =  vue.getListeColonne().getSelectedValue();			
+			MappingINT mappingChoisi = vue.getCBMappingINT().getSelectedValue();
+			
+			String minString = vue.getMinF().getText();
+			String maxString = vue.getMaxF().getText();
+			
+			if (ImportationModele.estUnEntier(minString) && ImportationModele.estUnEntier(maxString)){
+				
+				int min = Integer.parseInt(minString);
+				int max = Integer.parseInt(maxString);
+				
+				if (min < max){
+					
+					mappingChoisi.fourchette(min, max);	
+					colonneChoisie.setNbCasesIncorrectes(mappingChoisi.calculerValeursIncorrectes());			
+					colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
+					vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
+					vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+					
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "Minimum value must be less than maximum value.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "Minimum and maximum fields must be filled with integers.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+					
 		}
 		
 	}
