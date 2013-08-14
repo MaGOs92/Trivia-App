@@ -3,6 +3,8 @@ package Vue;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.Arrays;
+
 import javax.swing.*;
 import Controleur.DataAuditControleur;
 import Modele.Colonne;
@@ -746,7 +748,9 @@ public class DataAuditPanel extends JPanel {
 
 		panelMapping.add(lvaleursfrequentes);
 		
-		listVF = new JList<String>(this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursListe());
+		String[] dataJListVF = Arrays.copyOf(this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursListe().toArray(), this.getDAcontroller().getDAModele().getTabColonne()[this.getListeColonne().getSelectedIndex()].getValeursListe().size(), String[].class);
+		
+		listVF = new JList<String>(dataJListVF);
 		listVF.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		listVF.setLayoutOrientation(JList.VERTICAL);
 		listVF.setVisibleRowCount(-1);

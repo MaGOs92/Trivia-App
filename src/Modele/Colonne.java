@@ -2,6 +2,7 @@ package Modele;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import Modele.Mapping.Classe;
 import Modele.Mapping.MappingINT;
@@ -49,11 +50,11 @@ public class Colonne {
 	
 	private String[] valeursFrequentes;
 	
-	private String[] valeursListe;
+	private ArrayList<String> valeursListe;
 	
-	private String[] valeursListeSelectionnees;
+	private ArrayList<ValeurRetiree> valeursListeSelectionnees;
 	
-	Colonne(int id, Connection co, String nomColonne, String nomTable, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes, String[] valeursListe){
+	Colonne(int id, Connection co, String nomColonne, String nomTable, String typeDeDonnee, int nbCasesRemplies, int nbCasesVides, int nbLignesTotales, String[] valeursFrequentes, ArrayList<String> valeursListe){
 		this.setId(id);
 		this.setCo(co);
 		this.setNomColonne(nomColonne);
@@ -77,6 +78,7 @@ public class Colonne {
 			this.setStringValues(true);
 			this.setMappingString(new MappingString());
 		}
+		this.setValeursListeSelectionnees(new ArrayList<ValeurRetiree>());
 	}
 	
 	public String toString(){
@@ -115,27 +117,33 @@ public class Colonne {
 		this.setNbCasesIncorrectesKR(0);
 		int nbValeursIncorrectes = 0;
 		
-		String sql = "select count(`" + getNomColonne() + "`) as cnt ";
+		String sql = "select `" + getNomColonne() + "`, count(`" + getNomColonne() + "`) as cnt ";
 		
-				sql +=	"from " + getNomTable() + " ";
-				
-				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
-					if (i == 0){
-					sql += "WHERE `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
-					}
-					else
-						sql += " OR `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
-				}
-				
+		sql +=	"from " + getNomTable() + " ";
+		
+		sql += "group by `" + getNomColonne() + "` ";
+		
+		for (int i = 0; i < this.getValeursListeSelectionnees().size(); i++){
+			if (i == 0){
+			sql += "HAVING `" + getNomColonne() + "` = '" + getValeursListeSelectionnees().get(i).getValeur() + "'";
+			}
+			else
+				sql += " OR `" + getNomColonne() + "` = '" + getValeursListeSelectionnees().get(i).getValeur() + "'";
+		}
+		
+		sql += " order by cnt desc";
+		
 		System.out.println(sql);
 
 		
 		ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);
 		
-			
+		this.setValeursListeSelectionnees(new ArrayList<ValeurRetiree>());
+					
 		try {
 			while(resultat.next()){					
-				nbValeursIncorrectes += resultat.getInt(1);
+				this.getValeursListeSelectionnees().add(new ValeurRetiree(resultat.getString(1), resultat.getInt(2), this.getNbLignesTotales()));
+				nbValeursIncorrectes += resultat.getInt(2);	
 			}
 		} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -152,28 +160,35 @@ public class Colonne {
 	
 	public int calculerRemove(){
 		
+		this.setNbCasesIncorrectesKR(0);
 		int nbValeursIncorrectes = 0;
 		
-		String sql = "select count(`" + getNomColonne() + "`) as cnt ";
+		String sql = "select `" + getNomColonne() + "`, count(`" + getNomColonne() + "`) as cnt ";
 		
 				sql +=	"from " + getNomTable() + " ";
 				
-				for (int i = 0; i < this.getValeursListeSelectionnees().length; i++){
+				sql += "group by `" + getNomColonne() + "` ";
+				
+				for (int i = 0; i < this.getValeursListeSelectionnees().size(); i++){
 					if (i == 0){
-					sql += "WHERE `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
+					sql += "HAVING `" + getNomColonne() + "` = '" + getValeursListeSelectionnees().get(i).getValeur() + "'";
 					}
 					else
-						sql += "OR `" + getNomColonne() + "` = '" + getValeursListeSelectionnees()[i] + "'";
+						sql += " OR `" + getNomColonne() + "` = '" + getValeursListeSelectionnees().get(i).getValeur() + "'";
 				}
+				
+				sql += " order by cnt desc";
 				
 				System.out.println(sql);
 		
 		ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);
 		
+		this.setValeursListeSelectionnees(new ArrayList<ValeurRetiree>());
 			
 		try {
-			while(resultat.next()){	
-				nbValeursIncorrectes += resultat.getInt(1);
+			while(resultat.next()){
+				this.getValeursListeSelectionnees().add(new ValeurRetiree(resultat.getString(1), resultat.getInt(2), this.getNbLignesTotales()));
+				nbValeursIncorrectes += resultat.getInt(2);				
 				}
 			} 
 		catch (SQLException e) {
@@ -188,10 +203,22 @@ public class Colonne {
 		return nbValeursIncorrectes;
 		
 	}
+	
+	public String[] transformerListeTab(){
+		
+		String[] tab = new String[this.getValeursListeSelectionnees().size()*3];
+		int j = 0;
+		for (int i = 0; i < this.getValeursListeSelectionnees().size()*3; i+=3){
+			tab[i] = this.getValeursListeSelectionnees().get(j).getValeur();
+			tab[i+1] = "" + this.getValeursListeSelectionnees().get(j).getCount();
+			tab[i+2] = this.getValeursListeSelectionnees().get(j).getPourcentage();
+			j++;
+		}
+		
+		return tab;
+	}
 
 
-	
-	
 	public Classe getClasse() {
 		return classe;
 	}
@@ -224,11 +251,21 @@ public class Colonne {
 		this.keepOrRemove = keepOrRemove;
 	}
 
-	public String[] getValeursListeSelectionnees() {
+	public ArrayList<String> getValeursListe() {
+		return valeursListe;
+	}
+
+	public void setValeursListe(ArrayList<String> valeursListe) {
+		this.valeursListe = valeursListe;
+	}
+
+
+	public ArrayList<ValeurRetiree> getValeursListeSelectionnees() {
 		return valeursListeSelectionnees;
 	}
 
-	public void setValeursListeSelectionnees(String[] valeursListeSelectionnees) {
+	public void setValeursListeSelectionnees(
+			ArrayList<ValeurRetiree> valeursListeSelectionnees) {
 		this.valeursListeSelectionnees = valeursListeSelectionnees;
 	}
 
@@ -240,15 +277,7 @@ public class Colonne {
 		this.nomTable = nomTable;
 	}
 
-	public String[] getValeursListe() {
-		return valeursListe;
-	}
-
-	public void setValeursListe(String[] valeursListe) {
-		this.valeursListe = valeursListe;
-	}
 	
-
 	public Connection getCo() {
 		return co;
 	}

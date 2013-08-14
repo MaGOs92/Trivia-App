@@ -5,6 +5,18 @@ public class ValeurIncorrecteINT {
 	private int valeur;
 	
 	private int quantite;
+	
+	private String pourcentage;
+	
+	
+
+	public String getPourcentage() {
+		return pourcentage;
+	}
+
+	public void setPourcentage(String pourcentage) {
+		this.pourcentage = pourcentage;
+	}
 
 	public int getValeur() {
 		return valeur;
@@ -22,9 +34,10 @@ public class ValeurIncorrecteINT {
 		this.quantite = quantite;
 	}
 	
-	public ValeurIncorrecteINT(int valeur, int quantite){
+	public ValeurIncorrecteINT(int valeur, int quantite, int total){
 		this.setValeur(valeur);
 		this.setQuantite(quantite);
+		this.setPourcentage(((float) this.getQuantite()/(float) total)*100 + " %");
 	}
 
 }

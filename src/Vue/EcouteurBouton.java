@@ -105,7 +105,7 @@ public void actionPerformed(ActionEvent e){
 			colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
 			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());	
-			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+			vue.getPourcentage().setText("" + Math.round(colonneChoisie.getPourcentagesCasesRemplies()) + "%");
 			
 		}
 		
@@ -117,7 +117,7 @@ public void actionPerformed(ActionEvent e){
 			colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
 			colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 			vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
-			vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+			vue.getPourcentage().setText("" + Math.round(colonneChoisie.getPourcentagesCasesRemplies()) + "%");
 		}
 		
 		else if (source == vue.getBack()){
@@ -142,8 +142,10 @@ public void actionPerformed(ActionEvent e){
 				
 				if (min < max){
 					
-					mappingChoisi.fourchette(min, max);	
-					colonneChoisie.setNbCasesIncorrectes(mappingChoisi.calculerValeursIncorrectes());			
+					mappingChoisi.fourchette(min, max);
+					colonneChoisie.setNbCasesIncorrectesMapping(0);
+					colonneChoisie.setNbCasesIncorrectesMapping(mappingChoisi.calculerValeursIncorrectes());
+					colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
 					colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 					vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
 					vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");

@@ -5,10 +5,13 @@ import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import Modele.DataAuditModele;
+import Modele.ImportationModele;
 import Vue.ConnexionPanel;
 import Vue.ImportationPanel;
 import Vue.LoadingPanel;

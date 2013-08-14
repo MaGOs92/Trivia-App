@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import Modele.Mapping.Classe;
 import Modele.Mapping.MappingINT;
@@ -200,29 +201,36 @@ public class DataAuditModele {
 		
 		ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
 		
-		String [] valeursFrequentes = new String [6];
+		String [] valeursFrequentes = new String [9];
 		
 		int i = 0;
 
 		if (this.getMetadata().getColumnTypeName(index) == "VARCHAR"){
 			
-			while(resultat.next() && i < 6){
+			while(resultat.next() && i < 9){
 				
-				valeursFrequentes[i] = resultat.getString(1);
-				i++;
-				valeursFrequentes[i] = "" + resultat.getInt(2);
-				i++;
-				
+				if (resultat.getString(1) != ""){
+										
+					valeursFrequentes[i] = resultat.getString(1);
+					i++;
+					valeursFrequentes[i] = "" + resultat.getInt(2);
+					i++;
+					valeursFrequentes[i] = "" + Math.round(((float) resultat.getInt(2)/(float) this.getNbLignesTotales())*100) + " %";
+					i++;
+				}
+						
 			}
 		}
 		
 		else{
 			
-			while(resultat.next() && i < 6){
+			while(resultat.next() && i < 9){
 				
 				valeursFrequentes[i] = "" + resultat.getInt(1);
 				i++;
 				valeursFrequentes[i] = "" + resultat.getInt(2);
+				i++;
+				valeursFrequentes[i] = "" + Math.round(((float) resultat.getInt(2)/(float) this.getNbLignesTotales())*100) + " %";
 				i++;
 			}
 		}
@@ -232,35 +240,32 @@ public class DataAuditModele {
 	}
 	
 	// Tableau pour remplir la liste de valeurs fréquentes
-	public String[] valeursListe(int index) throws SQLException{
+	public ArrayList<String> valeursListe(int index) throws SQLException{
 		
 		 String sql = "select `" + this.getMetadata().getColumnName(index) + "`, count(`" + this.getMetadata().getColumnName(index) + "`) as cnt ";
 			sql +=	"from " + getNomTable() + " ";
 			sql +=	"group by `" + this.getMetadata().getColumnName(index) + "` ";
-			sql += "having count(`" + this.getMetadata().getColumnName(index) + "`) > 1 ";
+			//sql += "having count(`" + this.getMetadata().getColumnName(index) + "`) > 1 ";
 			sql +=	"order by cnt desc";
 	
 	ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
 	
-	String [] valeursListe = new String [25];
+	ArrayList<String> valeursListe = new ArrayList<String>();
 	
-	int i = 0;
 	
 	if (this.getMetadata().getColumnTypeName(index) == "VARCHAR")
 	{
-		while(resultat.next() && i < 25){
+		while(resultat.next()){
 			if (resultat.getString(1) != ""){
-				valeursListe[i] = resultat.getString(1);
-				i++;
+				valeursListe.add(resultat.getString(1));
 			}
 		}
 	}
 	else
 	{
-		while(resultat.next() && i < 25){
+		while(resultat.next()){
 			
-			valeursListe[i] = "" + resultat.getInt(1);
-			i++;
+			valeursListe.add("" + resultat.getInt(1));
 		}
 			
 	}

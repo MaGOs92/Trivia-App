@@ -84,6 +84,7 @@ public abstract class Mapping {
 		return this.getNom();
 	}
 	
+	
 }
 
 

@@ -16,6 +16,7 @@ import org.jfree.data.Range;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.DefaultValueDataset;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import com.lowagie.text.Anchor;
@@ -65,7 +66,7 @@ public class PDFGraphiques {
     
     public static JFreeChart createMeterChart(Colonne colonne) {
     	
-    	DefaultValueDataset dataset = new DefaultValueDataset(colonne.getPourcentagesCasesRemplies());
+    	DefaultValueDataset dataset = new DefaultValueDataset(Math.round(colonne.getPourcentagesCasesRemplies()));
 
         MeterPlot plot = new MeterPlot(dataset);
         
@@ -208,7 +209,7 @@ public class PDFGraphiques {
     
     public static void createTable(Paragraph subCatPart, String[] vf)
     	      throws BadElementException {
-    	    PdfPTable table = new PdfPTable(2);
+    	    PdfPTable table = new PdfPTable(3);
 
     	    // t.setBorderColor(BaseColor.GRAY);
     	    // t.setPadding(4);
@@ -219,7 +220,11 @@ public class PDFGraphiques {
     	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
     	    table.addCell(c1);
 
-    	    c1 = new PdfPCell(new Phrase("Number of entries"));
+    	    c1 = new PdfPCell(new Phrase("Count"));
+    	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+    	    table.addCell(c1);
+    	    
+    	    c1 = new PdfPCell(new Phrase("Pourcentage"));
     	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
     	    table.addCell(c1);
     	    
@@ -254,17 +259,51 @@ public class PDFGraphiques {
 	    para +=	"\n Class : " + colonne.getClasse().getNom() +
         		"\n Number of filled entries : " + colonne.getNbCasesRemplies() + 
         		"\n Number of empty entries : " + colonne.getNbCasesVides() + 
-        		"\n Number of incorrect entries : " + colonne.getNbCasesIncorrectes() +
-        		"\n 3 most frequent entries : ";
+        		"\n Number of incorrect entries : " + colonne.getNbCasesIncorrectes();
         
 	    subPara.add(new Paragraph(para));
 	    
 	    addEmptyLine(subPara, 1);
 	    
-	    createTable(subPara, colonne.getValeursFrequentes());
+	    if (colonne.getValeursFrequentes().length != 0){
+	    	subPara.add(new Paragraph("The three most frequent entries : "));
+		    createTable(subPara, colonne.getValeursFrequentes());		    
+		    addEmptyLine(subPara, 1);
+	    }
+	    
+	    addEmptyLine(subPara, 1);
+	    
+	    if (colonne.isStringValues()){
+	    	if (colonne.getMappingString().getValeursIncorrectes().size() != 0){
+	    		subPara.add(new Paragraph("Incorrect values from the mapping filter : "));
+			    createTable(subPara, colonne.getMappingString().transformerListeTab());		    
+			    addEmptyLine(subPara, 1);
+	    	}
+	    }
+	    else{
+	    	if (colonne.getMappingINT().getValeursIncorrectes().size() != 0){
+	    		subPara.add(new Paragraph("Incorrect values from the mapping filter : "));
+			    createTable(subPara, colonne.getMappingINT().transformerListeTab());		    
+			    addEmptyLine(subPara, 1);
+	    	}
+	    }
+	    
+	    addEmptyLine(subPara, 1);
+	    
+	    if (colonne.getValeursListeSelectionnees().size() != 0){
+	    	if (colonne.isKeepOrRemove()){
+	    		subPara.add(new Paragraph("Kept values : "));
+	    	}
+	    	else{
+		    	subPara.add(new Paragraph("Removed values : "));
+	    	}
+		    createTable(subPara, colonne.transformerListeTab());		    
+		    addEmptyLine(subPara, 1);
+	    }
         
         document.add(catPart);
         document.add(subPara);
+        document.newPage();
           
         // Pie
         
@@ -294,10 +333,9 @@ public class PDFGraphiques {
         
         g2dmeter.dispose();
          
-        contentByte.addTemplate(tPie, 120, 290);
-        contentByte.addTemplate(tMeter, 135, 50);
+        contentByte.addTemplate(tPie, 120, 450);
+        contentByte.addTemplate(tMeter, 135, 100);
         
-
         document.newPage();
 
       }

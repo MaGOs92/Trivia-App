@@ -59,6 +59,10 @@ public class ImportationModele {
 		
 		nomTable = nomTable.replaceAll("\\W", "");
 		
+		 if (nomTable.length() > 64){
+			 nomTable = nomTable.substring(0, 63);
+		  }
+		
 		System.out.println("Nom de la table : " + nomTable);
 		
 		return nomTable;

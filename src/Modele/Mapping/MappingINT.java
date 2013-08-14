@@ -51,7 +51,7 @@ public class MappingINT extends Mapping {
 						
 						while(resultat.next()){
 							
-							this.getValeursIncorrectes().add(new ValeurIncorrecteINT(resultat.getInt(1), resultat.getInt(2)));
+							this.getValeursIncorrectes().add(new ValeurIncorrecteINT(resultat.getInt(1), resultat.getInt(2), colonne.getNbLignesTotales()));
 
 						}
 					} catch (SQLException e) {
@@ -78,7 +78,7 @@ public class MappingINT extends Mapping {
 			
 			while(resultat.next()){
 				
-				this.getValeursIncorrectes().add(new ValeurIncorrecteINT(resultat.getInt(1), resultat.getInt(2)));
+				this.getValeursIncorrectes().add(new ValeurIncorrecteINT(resultat.getInt(1), resultat.getInt(2), this.getColonne().getNbLignesTotales()));
 
 			}
 		} catch (SQLException e) {
@@ -86,6 +86,20 @@ public class MappingINT extends Mapping {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public String[] transformerListeTab(){
+		
+		String[] tab = new String[this.getValeursIncorrectes().size()*3];
+		int j = 0;
+		for (int i = 0; i < this.getValeursIncorrectes().size()*3; i+=3){
+			tab[i] = "" + this.getValeursIncorrectes().get(j).getValeur();
+			tab[i+1] = "" + this.getValeursIncorrectes().get(j).getQuantite();
+			tab[i+2] = this.getValeursIncorrectes().get(j).getPourcentage();
+			j++;
+		}
+		
+		return tab;
 	}
 	
 	public int calculerValeursIncorrectes(){
