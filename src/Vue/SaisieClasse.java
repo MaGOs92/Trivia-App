@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import Modele.Colonne;
+import Modele.Mapping.Classe;
 
 
 public class SaisieClasse extends JDialog implements ActionListener {
@@ -16,14 +17,13 @@ public class SaisieClasse extends JDialog implements ActionListener {
 	Colonne[] colonnes;
 	JPanel[] panneau;
 	Box boite;
-	JButton valider;
 	JButton skip;
-	JRadioButton indicator;
-	JRadioButton date;
-	JRadioButton text;
-	JRadioButton identifier;
-	JRadioButton code;
-	JRadioButton quantity;
+	JRadioButtonClasse indicator;
+	JRadioButtonClasse date;
+	JRadioButtonClasse text;
+	JRadioButtonClasse identifier;
+	JRadioButtonClasse code;
+	JRadioButtonClasse quantity;
 	ButtonGroup choixRadio;
 	int compteur;
 
@@ -70,62 +70,63 @@ public class SaisieClasse extends JDialog implements ActionListener {
 	}
 
 
-	public JRadioButton getIndicator() {
+
+	public JRadioButtonClasse getIndicator() {
 		return indicator;
 	}
 
 
-	public void setIndicator(JRadioButton indicator) {
+	public void setIndicator(JRadioButtonClasse indicator) {
 		this.indicator = indicator;
 	}
 
 
-	public JRadioButton getDate() {
+	public JRadioButtonClasse getDate() {
 		return date;
 	}
 
 
-	public void setDate(JRadioButton date) {
+	public void setDate(JRadioButtonClasse date) {
 		this.date = date;
 	}
 
 
-	public JRadioButton getText() {
+	public JRadioButtonClasse getText() {
 		return text;
 	}
 
 
-	public void setText(JRadioButton text) {
+	public void setText(JRadioButtonClasse text) {
 		this.text = text;
 	}
 
 
-	public JRadioButton getIdentifier() {
+	public JRadioButtonClasse getIdentifier() {
 		return identifier;
 	}
 
 
-	public void setIdentifier(JRadioButton identifier) {
+	public void setIdentifier(JRadioButtonClasse identifier) {
 		this.identifier = identifier;
 	}
 
 
-	public JRadioButton getCode() {
+	public JRadioButtonClasse getCode() {
 		return code;
 	}
 
 
-	public void setCode(JRadioButton code) {
+	public void setCode(JRadioButtonClasse code) {
 		this.code = code;
 	}
 
 
-	public JRadioButton getQuantity() {
+	public JRadioButtonClasse getQuantity() {
 		return quantity;
 	}
 
 
-	public void setQuantity(JRadioButton quantity) {
+	public void setQuantity(JRadioButtonClasse quantity) {
 		this.quantity = quantity;
 	}
 
@@ -148,72 +149,7 @@ public class SaisieClasse extends JDialog implements ActionListener {
 	public void setColonnes(Colonne[] colonnes) {
 		this.colonnes = colonnes;
 	}
-
-
-	public JButton getValider() {
-		return valider;
-	}
-
-
-	public void setValider(JButton valider) {
-		this.valider = valider;
-	}
 	
-	
-	public SaisieClasse(){		
- 		
- 		boite = Box.createVerticalBox();
- 		setModal(true);
- 		setTitle("Set classes");
- 		
-			JPanel panneau = new JPanel(new BorderLayout());
-			panneau.add(new JLabel("SISI"), BorderLayout.NORTH);
-			
-			indicator = new JRadioButton("Indicator");
-			identifier = new JRadioButton("Identifier");
-			date = new JRadioButton("Date");
-			quantity = new JRadioButton("Quantity");
-			text = new JRadioButton("Text");
-			code = new JRadioButton("Code");
-			
-			JPanel panneauRadio = new JPanel(new FlowLayout());
-			panneauRadio.add(indicator);
-			panneauRadio.add(identifier);
-			panneauRadio.add(date);
-			panneauRadio.add(quantity);
-			panneauRadio.add(text);
-			panneauRadio.add(code);
-			 			
-			choixRadio = new ButtonGroup();
-			choixRadio.add(indicator);
-			choixRadio.add(identifier);
-			choixRadio.add(code);
-			choixRadio.add(date);
-			choixRadio.add(text);
-			choixRadio.add(quantity);
-			
-			panneau.add(panneauRadio, BorderLayout.CENTER);
-			
-			JPanel panneauBoutons = new JPanel(new FlowLayout());
- 			valider = new JButton("Validate");
- 			skip = new JButton("Skip");
-			panneauBoutons.add(valider);
-			panneauBoutons.add(skip);
-			
-			panneau.add(panneauBoutons, BorderLayout.SOUTH);
-			
-			valider.addActionListener(this);
-			skip.addActionListener(this);
-			
-			boite.add(panneau);
-			add(boite) ;
-			pack();
-			setLocationRelativeTo(null);
-			setVisible(true);
-			
-	}
-
-
 
 	public SaisieClasse(Colonne[] colonnes) {
 
@@ -222,6 +158,8 @@ public class SaisieClasse extends JDialog implements ActionListener {
  		boite = Box.createVerticalBox();
  		setModal(true);
  		setTitle("Set classes");
+ 		this.setCompteur(0);
+ 		this.setColonnes(colonnes);
  		
  		for (int i = 0; i < colonnes.length; i ++){
  			
@@ -232,12 +170,14 @@ public class SaisieClasse extends JDialog implements ActionListener {
  			
  			panneau[i].add(titre, BorderLayout.NORTH);
  			
- 			indicator = new JRadioButton("Indicator");
- 			identifier = new JRadioButton("Identifier");
- 			date = new JRadioButton("Date");
- 			quantity = new JRadioButton("Quantity");
- 			text = new JRadioButton("Text");
- 			code = new JRadioButton("Code");
+ 			indicator = new JRadioButtonClasse("Indicator", new Classe(2, "Indicator"));
+ 			identifier = new JRadioButtonClasse("Identifier", new Classe(1, "Identifier"));
+ 			date = new JRadioButtonClasse("Date", new Classe(4, "Date"));
+ 			quantity = new JRadioButtonClasse("Quantity", new Classe(3, "Quantity"));
+ 			text = new JRadioButtonClasse("Text", new Classe(5, "Text"));
+ 			code = new JRadioButtonClasse("Code", new Classe(6, "Code"));
+ 			
+ 			JPanel panneauCentre = new JPanel(new BorderLayout());
  			
  			JPanel panneauRadio = new JPanel(new FlowLayout());
  			panneauRadio.add(indicator);
@@ -255,18 +195,42 @@ public class SaisieClasse extends JDialog implements ActionListener {
  			choixRadio.add(text);
  			choixRadio.add(quantity);
  			
- 			panneau[i].add(panneauRadio, BorderLayout.CENTER);
+ 			indicator.addActionListener(this);
+ 			identifier.addActionListener(this);
+ 			date.addActionListener(this);
+ 			quantity.addActionListener(this);
+ 			text.addActionListener(this);
+ 			code.addActionListener(this);
+ 			
+ 			panneauCentre.add(panneauRadio, BorderLayout.NORTH);
+ 			
+ 			
+ 	        String[] entetes = {"Value", "Count", "Pourcentage"};
+ 	        
+ 	        String[][] donnees = new String[3][3];
+ 	       	        
+ 	        int l = 0; 	        
+ 	        for (int j = 0; j < 3; j++){
+ 	        	for (int k = 0; k < 3; k ++){
+ 	        		donnees[j][k] = colonnes[i].getValeursFrequentes()[l];
+ 	        		l ++;
+ 	        	}
+ 	        }
+ 	        
+ 	        JTable tableau = new JTable(donnees, entetes);
+ 	        
+ 	       panneauCentre.add(tableau.getTableHeader(), BorderLayout.CENTER);
+ 	       panneauCentre.add(tableau, BorderLayout.SOUTH);
+ 			
+ 			panneau[i].add(panneauCentre, BorderLayout.CENTER);
  			
  			JPanel panneauBoutons = new JPanel(new FlowLayout());
- 			valider = new JButton("Validate");
  			skip = new JButton("Skip");
  			
  			panneauBoutons.add(skip);
- 			panneauBoutons.add(valider);
  			
  			panneau[i].add(panneauBoutons, BorderLayout.SOUTH);
  			
- 			valider.addActionListener(this);
  			skip.addActionListener(this);
 
  			
@@ -284,15 +248,55 @@ public class SaisieClasse extends JDialog implements ActionListener {
  	public void actionPerformed(ActionEvent evt) {
  		Object source = evt.getSource();
  		
- 		if (source == valider) {
- 			System.out.println("");
+ 		if (source == skip) { 
+ 			dispose();
+ 		}
+ 				
+ 		else{ 		
  			this.setCompteur(this.getCompteur() + 1);
- 			if (this.getCompteur() == getColonnes().length){
- 				//this.getColonnes()[this.getCompteur()].setClasse(this.getChoixRadio().getSelection().toString()); 				
+ 			if (this.getCompteur() == this.getColonnes().length){
+ 				
+ 				if (source == this.getIdentifier()) {
+ 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIdentifier().getClasse());
+ 					System.out.println(this.getColonnes()[this.getCompteur()-1].getNomColonne());
+ 				}
+ 				else if (source == this.getCode()) {
+ 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getCode().getClasse());
+ 				}
+ 				else if (source == this.getDate()) {
+ 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getDate().getClasse());
+ 				}
+ 				else if (source == this.getIndicator()) {
+ 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIndicator().getClasse());
+ 				}
+ 				else if (source == this.getQuantity()) {
+ 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getQuantity().getClasse());
+ 				}
+ 				else if (source == this.getText()) {
+ 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getText().getClasse());
+ 				}
  				dispose();
  			}
- 			else{ 			
- 				//this.getColonnes()[this.getCompteur()].setClasse(this.getChoixRadio().getSelection().toString());
+ 			else{	
+ 				System.out.println(this.getColonnes()[this.getCompteur()-1].getNomColonne());
+ 	 				if (source == this.getIdentifier()) {
+ 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIdentifier().getClasse());
+ 	 				}
+ 	 				else if (source == this.getCode()) {
+ 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getCode().getClasse());
+ 	 				}
+ 	 				else if (source == this.getDate()) {
+ 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getDate().getClasse());
+ 	 				}
+ 	 				else if (source == this.getIndicator()) {
+ 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIndicator().getClasse());
+ 	 				}
+ 	 				else if (source == this.getQuantity()) {
+ 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getQuantity().getClasse());
+ 	 				}
+ 	 				else if (source == this.getText()) {
+ 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getText().getClasse());
+ 	 				}
  				this.getBoite().removeAll();
  				this.getBoite().add(this.getPanneau()[this.getCompteur()]);
  				pack();
@@ -301,15 +305,6 @@ public class SaisieClasse extends JDialog implements ActionListener {
  			}
 
  		}
- 		else if (source == skip) { 
- 			dispose();
- 		}
- 	}
- 	
- 	public static void main(String[] args){
- 		
- 		SaisieClasse test = new SaisieClasse();
- 		
  	}
  	
 }

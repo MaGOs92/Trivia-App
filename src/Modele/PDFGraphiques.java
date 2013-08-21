@@ -10,13 +10,11 @@ import java.net.MalformedURLException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.MeterInterval;
 import org.jfree.chart.plot.MeterPlot;
-import org.jfree.data.Range;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.DefaultValueDataset;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 
 import com.lowagie.text.Anchor;
@@ -47,7 +45,26 @@ public class PDFGraphiques {
 		      Font.BOLD);  
 	  private static Font smallBold = new Font(Font.HELVETICA, 12,
 		      Font.NORMAL);
-	
+	  
+	  public ArrayList<Colonne> colonneSelectionnees;
+	 
+	public ArrayList<Colonne> getColonneSelectionnees() {
+		return colonneSelectionnees;
+	}
+
+	public void setColonneSelectionnees(ArrayList<Colonne> colonneSelectionnees) {
+		this.colonneSelectionnees = colonneSelectionnees;
+	}
+
+	public PDFGraphiques(DataAuditModele model){
+		this.setColonneSelectionnees(new ArrayList<Colonne>());
+		for (int i = 0; i < model.getNbColonnesTotales(); i++){
+        	if (model.getTabColonne()[i].isSelectionnee()){
+        		this.getColonneSelectionnees().add(model.getTabColonne()[i]);
+        	}
+		} 	
+	}
+	  
     public static JFreeChart generatePieChart(Colonne colonne) {
     	
         DefaultPieDataset dataSet = new DefaultPieDataset();
@@ -70,12 +87,26 @@ public class PDFGraphiques {
 
         MeterPlot plot = new MeterPlot(dataset);
         
-        plot.addInterval(new MeterInterval("High", new Range(75.0, 100.0)));
+        Color rougeTrivia = new Color(180,5,22);
+        Color grisTrivia = new Color(230,230,230);
+        
+        
+        //plot.addInterval(new MeterInterval("High", new Range(75.0, 100.0)));
 
         plot.setUnits("%");
 
+        plot.setDialBackgroundPaint(grisTrivia);
+        
+        plot.setValuePaint(Color.black);
+        
+        //plot.setDrawBorder(true);
+        
+        plot.setNeedlePaint(rougeTrivia);
+
         JFreeChart chart = new JFreeChart("Data quality overview", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+        
         chart.setBackgroundPaint(Color.white); 
+        
         return chart;
     }
     
@@ -176,7 +207,7 @@ public class PDFGraphiques {
     	    document.newPage();
     	  }
     
-    public static void writeChartToPDF(String fileName, DataAuditModele model) {
+    public static void writeChartToPDF(PDFGraphiques PDF, String fileName, DataAuditModele model) {
         PdfWriter writer = null;
      
         Document document = new Document();
@@ -191,7 +222,7 @@ public class PDFGraphiques {
             
             addTitlePage(document, model);
             
-            //addClassTable(document, model);
+            PDF.addClassTable(document, model, writer);
             
             int j = 0;
             for (int i = 0; i < model.getNbColonnesTotales(); i++){
@@ -224,7 +255,7 @@ public class PDFGraphiques {
     	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
     	    table.addCell(c1);
     	    
-    	    c1 = new PdfPCell(new Phrase("Pourcentage"));
+    	    c1 = new PdfPCell(new Phrase("Percentage"));
     	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
     	    table.addCell(c1);
     	    
@@ -237,6 +268,37 @@ public class PDFGraphiques {
     	    subCatPart.add(table);
 
     	  }
+    
+    public static void createClassTable(Paragraph subCatPart, String[] vf)
+  	      throws BadElementException {
+  	    PdfPTable table = new PdfPTable(3);
+
+  	    // t.setBorderColor(BaseColor.GRAY);
+  	    // t.setPadding(4);
+  	    // t.setSpacing(4);
+  	    // t.setBorderWidth(1);
+
+  	    PdfPCell c1 = new PdfPCell(new Phrase("Class"));
+  	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+  	    table.addCell(c1);
+
+  	    c1 = new PdfPCell(new Phrase("Count of selected field"));
+  	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+  	    table.addCell(c1);
+  	    
+  	    c1 = new PdfPCell(new Phrase("Average correct percentage"));
+  	    c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+  	    table.addCell(c1);
+  	    
+  	    table.setHeaderRows(1);
+  	    
+  	    for (int i = 0; i < vf.length; i++){
+  	    	table.addCell(vf[i]);
+  	    }
+
+  	    subCatPart.add(table);
+
+  	  }
     
     public static void addContent(Document document, Colonne colonne, PdfWriter writer, int i) throws DocumentException {
     	
@@ -303,6 +365,7 @@ public class PDFGraphiques {
         
         document.add(catPart);
         document.add(subPara);
+        writer.getPageNumber();
         document.newPage();
           
         // Pie
@@ -335,26 +398,50 @@ public class PDFGraphiques {
          
         contentByte.addTemplate(tPie, 120, 450);
         contentByte.addTemplate(tMeter, 135, 100);
-        
         document.newPage();
 
       }
     
-    public static void addClassTable(Document document, DataAuditModele model) throws DocumentException{
+    public void addClassTable(Document document, DataAuditModele model, PdfWriter writer) throws DocumentException{
     	
     	Paragraph titre = new Paragraph();
 	    addEmptyLine(titre, 3);	    
 	    titre.add(new Paragraph("Class table", titreFont));
 	    addEmptyLine(titre, 3);	    
-	    titre.setAlignment(Element.ALIGN_CENTER);
-	    addEmptyLine(titre, 3);	    
+	    titre.setAlignment(Element.ALIGN_CENTER);   
 	    document.add(titre);
 	    
-	    String [] tabClass = new String[10];
+	    String [] tabClass = new String[18];
+	    
+	    tabClass[0] = "Identifier";
+	    tabClass[3] = "Indicator";
+	    tabClass[6] = "Quantity";
+	    tabClass[9] = "Date";
+	    tabClass[12] = "Text";
+	    tabClass[15] = "Code";
+	    
+	    int nbClasse = 1;
+	    for (int i = 1; i < 18; i += 3){
+	    	int nb = 0;
+	    	float pourcentage = 0;
+	    	for (int j = 0; j < this.getColonneSelectionnees().size(); j++){
+		    	if (this.getColonneSelectionnees().get(j).getClasse().getId() == nbClasse){
+		    		nb ++;
+		    		pourcentage += this.getColonneSelectionnees().get(j).getPourcentagesCasesRemplies();
+		    	}	    		
+	    	}
+	    	tabClass[i] = "" + nb;
+	    	pourcentage = pourcentage / nb;	    	
+	    	tabClass[i+1] = Math.round(pourcentage) + "%";
+	    	
+	    	nbClasse ++;
+	    }
 	    
 	    Paragraph tab = new Paragraph();
-	    createTable(tab, tabClass);
-	    document.add(tab);
+	    createClassTable(tab, tabClass);
+	    document.add(tab);	    
+        writer.getPageNumber();
+        document.newPage();
     }
 
 	

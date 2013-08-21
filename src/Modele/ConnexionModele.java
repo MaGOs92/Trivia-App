@@ -107,7 +107,7 @@ public class ConnexionModele {
 	}
 
 	// Fermeture de la connection
-	public void closeConnection(Connection co){
+	public static void closeConnection(Connection co){
 		try {
 			co.close();
 			System.out.println("Connexion fermée!");

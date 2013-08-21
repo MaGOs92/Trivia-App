@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import Modele.Colonne;
+import Modele.ConnexionModele;
 import Modele.ImportationModele;
+import Modele.PDFGraphiques;
 import Modele.Mapping.MappingINT;
 import Modele.Mapping.MappingString;
 
@@ -81,7 +83,9 @@ public void actionPerformed(ActionEvent e){
 				SaisieClasse classe = new SaisieClasse(tabClasse);
 			}
 			
-			Modele.PDFGraphiques.writeChartToPDF(nomDuFichier, vue.getDAcontroller().getDAModele());
+			PDFGraphiques PDF = new PDFGraphiques(vue.getDAcontroller().getDAModele());
+			
+			Modele.PDFGraphiques.writeChartToPDF(PDF, nomDuFichier, vue.getDAcontroller().getDAModele());
 			
 			Object[] options = { "Exit the program", "Return to mapping menu" };
 			int option = JOptionPane.showOptionDialog(null, "A new PDF reporting has been generated : " + nomDuFichier, "DataAudit report generated",
@@ -92,6 +96,7 @@ public void actionPerformed(ActionEvent e){
 				if (!vue.CBKeepTable.isSelected()){
 					ImportationModele.deleteTable(vue.getDAcontroller().getCo() , vue.getDAcontroller().getDAModele().getNomTable());
 				}
+				ConnexionModele.closeConnection(vue.getDAcontroller().getCo());
 				System.exit(0);
 			}
 

@@ -38,6 +38,7 @@ public class MappingString extends Mapping {
 	
 	public MappingString(){
 		super();
+		this.setValeursIncorrectes(new ArrayList<ValeurIncorrecteString>());
 	}
 	
 	public MappingString(int id, String nom, Classe classe, String nomTable, Connection co){
@@ -49,8 +50,12 @@ public class MappingString extends Mapping {
 		
 		this.setColonne(colonne);
 		this.getColonne().setClasse(this.getClasse());
-			
-			if (this.getId() == 1 || this.getId() == 18){
+		this.setValeursIncorrectes(new ArrayList<ValeurIncorrecteString>());
+		
+		if (this.getId() == 0){
+			this.setValeursIncorrectes(new ArrayList<ValeurIncorrecteString>());
+		}
+		else if (this.getId() == 1 || this.getId() == 18){
 				
 				 String sql = "select `" + colonne.getNomColonne() + "`, count(`" + colonne.getNomColonne() + "`) as cnt ";
 					sql +=	"from " + this.getNomTable() + " ";
@@ -96,7 +101,7 @@ public class MappingString extends Mapping {
 						while(resultat.next()){
 							
 							for (int i = 0; i < this.getTabValeursIncorrects().length; i++){
-								if (this.getTabValeursIncorrects()[i] == resultat.getString(1)){
+								if (this.getTabValeursIncorrects()[i].equals(resultat.getString(1))){
 									this.getValeursIncorrectes().add(new ValeurIncorrecteString(resultat.getString(1), resultat.getInt(2), colonne.getNbLignesTotales()));
 								}
 									

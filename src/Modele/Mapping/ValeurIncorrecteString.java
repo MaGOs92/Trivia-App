@@ -35,7 +35,7 @@ public class ValeurIncorrecteString {
 	public ValeurIncorrecteString(String valeur, int quantite, int total){
 		this.setValeur(valeur);
 		this.setQuantite(quantite);
-		this.setPourcentage(((float) this.getQuantite()/(float) total)*100 + " %");
+		this.setPourcentage(Math.round(((float) this.getQuantite()/(float) total)*100) + " %");
 	}
 
 }

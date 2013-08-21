@@ -196,7 +196,7 @@ public class DataAuditModele {
 		 String sql = "select `" + this.getMetadata().getColumnName(index) + "`, count(`" + this.getMetadata().getColumnName(index) + "`) as cnt ";
 				sql +=	"from " + getNomTable() + " ";
 				sql +=	"group by `" + this.getMetadata().getColumnName(index) + "` ";
-				sql += "having count(`" + this.getMetadata().getColumnName(index) + "`) > 1 ";
+				//sql += "having count(`" + this.getMetadata().getColumnName(index) + "`) > 1 ";
 				sql +=	"order by cnt desc";
 		
 		ResultSet resultat = exeRequete(sql, this.getConnexion(), 0);
@@ -209,7 +209,7 @@ public class DataAuditModele {
 			
 			while(resultat.next() && i < 9){
 				
-				if (resultat.getString(1) != ""){
+				if (!resultat.getString(1).equals("")){
 										
 					valeursFrequentes[i] = resultat.getString(1);
 					i++;
@@ -256,7 +256,7 @@ public class DataAuditModele {
 	if (this.getMetadata().getColumnTypeName(index) == "VARCHAR")
 	{
 		while(resultat.next()){
-			if (resultat.getString(1) != ""){
+			if (!resultat.getString(1).equals("")){
 				valeursListe.add(resultat.getString(1));
 			}
 		}

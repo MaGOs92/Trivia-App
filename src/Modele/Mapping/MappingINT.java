@@ -24,6 +24,7 @@ public class MappingINT extends Mapping {
 	
 	public MappingINT(){
 		super();
+		this.setValeursIncorrectes(new ArrayList<ValeurIncorrecteINT>());
 	}
 
 	public MappingINT(int id, String nom, Classe classe, String nomTable, Connection co){
@@ -35,7 +36,8 @@ public class MappingINT extends Mapping {
 		
 		this.setColonne(colonne);
 		this.getColonne().setClasse(this.getClasse());
-			
+		this.setValeursIncorrectes(new ArrayList<ValeurIncorrecteINT>());
+				
 			if (this.getId() == 1 || this.getId() == 18){
 				
 				 String sql = "select `" + colonne.getNomColonne() + "`, count(`" + colonne.getNomColonne() + "`) as cnt ";
