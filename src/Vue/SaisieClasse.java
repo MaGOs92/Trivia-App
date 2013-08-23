@@ -14,8 +14,8 @@ public class SaisieClasse extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 	
-	Colonne[] colonnes;
-	JPanel[] panneau;
+	Colonne colonne;
+	JPanel panneau;
 	Box boite;
 	JButton skip;
 	JRadioButtonClasse indicator;
@@ -25,7 +25,6 @@ public class SaisieClasse extends JDialog implements ActionListener {
 	JRadioButtonClasse code;
 	JRadioButtonClasse quantity;
 	ButtonGroup choixRadio;
-	int compteur;
 
 	
 	
@@ -40,23 +39,23 @@ public class SaisieClasse extends JDialog implements ActionListener {
 	}
 
 
-	public JPanel[] getPanneau() {
+	public Colonne getColonne() {
+		return colonne;
+	}
+
+
+	public void setColonne(Colonne colonne) {
+		this.colonne = colonne;
+	}
+
+
+	public JPanel getPanneau() {
 		return panneau;
 	}
 
 
-	public void setPanneau(JPanel[] panneau) {
+	public void setPanneau(JPanel panneau) {
 		this.panneau = panneau;
-	}
-
-
-	public int getCompteur() {
-		return compteur;
-	}
-
-
-	public void setCompteur(int compteur) {
-		this.compteur = compteur;
 	}
 
 
@@ -141,34 +140,22 @@ public class SaisieClasse extends JDialog implements ActionListener {
 	}
 
 
-	public Colonne[] getColonnes() {
-		return colonnes;
-	}
-
-
-	public void setColonnes(Colonne[] colonnes) {
-		this.colonnes = colonnes;
-	}
 	
 
-	public SaisieClasse(Colonne[] colonnes) {
-
- 		panneau = new JPanel[colonnes.length];
+	public SaisieClasse(Colonne colonne) {
 	
  		boite = Box.createVerticalBox();
  		setModal(true);
  		setTitle("Set classes");
- 		this.setCompteur(0);
- 		this.setColonnes(colonnes);
+ 		this.setColonne(colonne);
  		
- 		for (int i = 0; i < colonnes.length; i ++){
  			
- 			panneau[i] = new JPanel(new BorderLayout());
+ 			panneau = new JPanel(new BorderLayout());
  			
  			JPanel titre = new JPanel(new FlowLayout());
- 			titre.add(new JLabel(colonnes[i].getNomColonne()));
+ 			titre.add(new JLabel(colonne.getNomColonne()));
  			
- 			panneau[i].add(titre, BorderLayout.NORTH);
+ 			panneau.add(titre, BorderLayout.NORTH);
  			
  			indicator = new JRadioButtonClasse("Indicator", new Classe(2, "Indicator"));
  			identifier = new JRadioButtonClasse("Identifier", new Classe(1, "Identifier"));
@@ -212,7 +199,7 @@ public class SaisieClasse extends JDialog implements ActionListener {
  	        int l = 0; 	        
  	        for (int j = 0; j < 3; j++){
  	        	for (int k = 0; k < 3; k ++){
- 	        		donnees[j][k] = colonnes[i].getValeursFrequentes()[l];
+ 	        		donnees[j][k] = colonne.getValeursFrequentes()[l];
  	        		l ++;
  	        	}
  	        }
@@ -222,21 +209,18 @@ public class SaisieClasse extends JDialog implements ActionListener {
  	       panneauCentre.add(tableau.getTableHeader(), BorderLayout.CENTER);
  	       panneauCentre.add(tableau, BorderLayout.SOUTH);
  			
- 			panneau[i].add(panneauCentre, BorderLayout.CENTER);
+ 			panneau.add(panneauCentre, BorderLayout.CENTER);
  			
  			JPanel panneauBoutons = new JPanel(new FlowLayout());
  			skip = new JButton("Skip");
  			
  			panneauBoutons.add(skip);
  			
- 			panneau[i].add(panneauBoutons, BorderLayout.SOUTH);
+ 			panneau.add(panneauBoutons, BorderLayout.SOUTH);
  			
  			skip.addActionListener(this);
-
- 			
- 		}
  		
-		boite.add(panneau[0]);
+		boite.add(panneau);
 		add(boite);
 		pack();
 		setResizable(false);
@@ -246,65 +230,38 @@ public class SaisieClasse extends JDialog implements ActionListener {
  
  	
  	public void actionPerformed(ActionEvent evt) {
- 		Object source = evt.getSource();
  		
- 		if (source == skip) { 
- 			dispose();
- 		}
- 				
- 		else{ 		
- 			this.setCompteur(this.getCompteur() + 1);
- 			if (this.getCompteur() == this.getColonnes().length){
- 				
- 				if (source == this.getIdentifier()) {
- 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIdentifier().getClasse());
- 					System.out.println(this.getColonnes()[this.getCompteur()-1].getNomColonne());
- 				}
- 				else if (source == this.getCode()) {
- 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getCode().getClasse());
- 				}
- 				else if (source == this.getDate()) {
- 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getDate().getClasse());
- 				}
- 				else if (source == this.getIndicator()) {
- 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIndicator().getClasse());
- 				}
- 				else if (source == this.getQuantity()) {
- 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getQuantity().getClasse());
- 				}
- 				else if (source == this.getText()) {
- 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getText().getClasse());
- 				}
- 				dispose();
- 			}
- 			else{	
- 				System.out.println(this.getColonnes()[this.getCompteur()-1].getNomColonne());
- 	 				if (source == this.getIdentifier()) {
- 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIdentifier().getClasse());
- 	 				}
- 	 				else if (source == this.getCode()) {
- 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getCode().getClasse());
- 	 				}
- 	 				else if (source == this.getDate()) {
- 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getDate().getClasse());
- 	 				}
- 	 				else if (source == this.getIndicator()) {
- 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getIndicator().getClasse());
- 	 				}
- 	 				else if (source == this.getQuantity()) {
- 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getQuantity().getClasse());
- 	 				}
- 	 				else if (source == this.getText()) {
- 	 					this.getColonnes()[this.getCompteur()-1].setClasse(this.getText().getClasse());
- 	 				}
- 				this.getBoite().removeAll();
- 				this.getBoite().add(this.getPanneau()[this.getCompteur()]);
- 				pack();
- 				setLocationRelativeTo(null);
- 				setVisible(true);
- 			}
+ 		Object source = evt.getSource();
 
+ 		if (source == this.getSkip()) { 
+ 			dispose();
+ 		}			
+ 		else if (source == this.getIdentifier()) {
+ 					this.getColonne().setClasse(this.getIdentifier().getClasse());
+ 					dispose();
+ 				}
+ 		else if (source == this.getCode()) {
+ 					this.getColonne().setClasse(this.getCode().getClasse());
+ 					dispose();
+ 				}
+ 		else if (source == this.getDate()) {
+ 					this.getColonne().setClasse(this.getDate().getClasse());
+ 					dispose();
+ 				}
+ 		else if (source == this.getIndicator()) {
+ 					this.getColonne().setClasse(this.getIndicator().getClasse());
+ 					dispose();
+ 				}
+ 		else if (source == this.getQuantity()) {
+ 					this.getColonne().setClasse(this.getQuantity().getClasse());
+ 					dispose();
+ 			}
+ 		else if (source == this.getText()) {
+ 					this.getColonne().setClasse(this.getText().getClasse());
+ 					dispose();
+ 			}
  		}
- 	}
+
+ 
+ }
  	
-}

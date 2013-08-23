@@ -67,11 +67,13 @@ public class MappingINT extends Mapping {
 	
 	public void fourchette(int min, int max){
 		
+		this.setValeursIncorrectes(new ArrayList<ValeurIncorrecteINT>());
+		
 		 String sql = "select `" + this.getColonne().getNomColonne() + "`, count(`" + this.getColonne().getNomColonne() + "`) as cnt ";
 			sql +=	"from " + this.getNomTable() + " ";
 			sql +=	"group by `" + this.getColonne().getNomColonne() + "` ";
-			sql += "having `" + this.getColonne().getNomColonne() + "` >= " + min + " ";
-			sql += "and `" + this.getColonne().getNomColonne() + "` <= " + max + " ";
+			sql += "having `" + this.getColonne().getNomColonne() + "` < " + min + " ";
+			sql += "or `" + this.getColonne().getNomColonne() + "` > " + max + " ";
 			sql +=	"order by cnt desc";
 			
 		ResultSet resultat = DataAuditModele.exeRequete(sql, this.getCo(), 0);

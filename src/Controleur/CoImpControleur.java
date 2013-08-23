@@ -126,7 +126,7 @@ public class CoImpControleur {
 		   getFenetre().setVisible(false);
 
 		   getLoaPanel().setVisible(true);
-
+		   
 		   Chargement sw = new Chargement(this);
 
 			      //On écoute le changement de valeur pour la propriété
@@ -147,5 +147,7 @@ public class CoImpControleur {
 		   sw.execute();
 		   
 		}
+		   
+		
 	   
 }

@@ -206,13 +206,23 @@ public class ImportationModele {
 		  
 		  for (int i = 0 ; i < noms.length ; i++){
 			  			  
-				//noms[i] = noms[i].replaceAll("\\W","");
+				noms[i] = noms[i].replaceAll("\\W","");
 				
 				 if (noms[i].length() > 64){
 					  noms[i] = noms[i].substring(0, 63);
 				  }
 				 
-				 //noms[i] += "_" + i;
+				 if (noms[i].equals("")){
+					 noms[i] = "no_name_field";
+				 }
+				 
+				 if (i != 0){
+					 for (int j = 0; j < i; j++){
+						 if(noms[i].equals(noms[j])){
+							 noms[i] += "_" + i;
+						 }
+					 }
+				 }
 
 		  }		  
 		   
@@ -337,8 +347,6 @@ public class ImportationModele {
 			e.printStackTrace();
 		}
 
-		main.closeConnection(co);
-	
 
 	}
 

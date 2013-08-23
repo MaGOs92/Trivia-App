@@ -11,7 +11,6 @@ import Modele.ConnexionModele;
 import Modele.ImportationModele;
 import Modele.PDFGraphiques;
 import Modele.Mapping.MappingINT;
-import Modele.Mapping.MappingString;
 
 public class EcouteurBouton implements ActionListener {
 	
@@ -80,10 +79,34 @@ public void actionPerformed(ActionEvent e){
 			}
 			
 			if (tabClasse.length != 0){
-				SaisieClasse classe = new SaisieClasse(tabClasse);
+				for (int i = 0; i < tabClasse.length; i ++){
+					SaisieClasse classe = new SaisieClasse(tabClasse[i]);
+				}
 			}
 			
-			PDFGraphiques PDF = new PDFGraphiques(vue.getDAcontroller().getDAModele());
+			j = 0;
+			
+			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++){
+				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee()){
+					j++;
+				}
+			}
+					
+			Colonne[] tabClasse2 = new Colonne[j];			
+			
+			j = 0;
+			
+			for (int i = 0; i < vue.getDAcontroller().getDAModele().getNbColonnesTotales(); i++){
+				if (vue.getDAcontroller().getDAModele().getTabColonne()[i].isSelectionnee()){
+					tabClasse2[j] = vue.getDAcontroller().getDAModele().getTabColonne()[i];
+					j++;
+				}
+			}
+			
+			MarketabilityPanel MP = new MarketabilityPanel(tabClasse2);
+			PromotabilityPanel PP = new PromotabilityPanel(tabClasse2);
+			
+			PDFGraphiques PDF = new PDFGraphiques(vue.getDAcontroller().getDAModele(), MP.getColonnesSelected(), PP.getColonnesSelected());
 			
 			Modele.PDFGraphiques.writeChartToPDF(PDF, nomDuFichier, vue.getDAcontroller().getDAModele());
 			
@@ -153,7 +176,7 @@ public void actionPerformed(ActionEvent e){
 					colonneChoisie.setNbCasesIncorrectes(colonneChoisie.getNbCasesIncorrectesMapping() + colonneChoisie.getNbCasesIncorrectesKR());
 					colonneChoisie.setPourcentagesCasesRemplies(colonneChoisie.calculerPoucentage());
 					vue.getIncorrectEntries().setText("" + colonneChoisie.getNbCasesIncorrectes());
-					vue.getPourcentage().setText("" + colonneChoisie.getPourcentagesCasesRemplies() + "%");
+					vue.getPourcentage().setText("" + Math.round(colonneChoisie.getPourcentagesCasesRemplies()) + "%");
 					
 				}
 				else{
