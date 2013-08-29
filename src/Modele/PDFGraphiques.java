@@ -10,10 +10,17 @@ import java.net.MalformedURLException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.MeterPlot;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.DefaultValueDataset;
@@ -29,6 +36,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 
@@ -103,11 +111,23 @@ public class PDFGraphiques {
  
         JFreeChart chart = ChartFactory.createPieChart("Data quality repartition", dataSet, true, true, false);
         
-        chart.setBackgroundPaint(Color.white); 
-        chart.setBorderVisible(false);
+        Color rougeTrivia = new Color(180,5,22);
+        Color grisTrivia = new Color(192,192,192);
+        
+        PiePlot plot = (PiePlot) chart.getPlot();
+        
+        plot.setSectionPaint("Incorrect entries", Color.black);
+        plot.setSectionPaint("Empty entries", grisTrivia);
+        plot.setSectionPaint("Filled entries", rougeTrivia);
+        plot.setLabelGenerator(null);
+        
+        plot.setBackgroundPaint(Color.white);
+        //chart.setBackgroundPaint(Color.white); 
+        //chart.setBorderVisible(false);
         
         return chart;
     }
+    
     
     public static JFreeChart createBarChartMarketability(ArrayList<Colonne> colonnes){
     	
@@ -124,7 +144,7 @@ public class PDFGraphiques {
     	
     	JFreeChart barChart = ChartFactory.createBarChart("Marketability score", "", "", 
 				dataset, PlotOrientation.VERTICAL, true, true, false);
-    	
+    	/*
     	
     	ValueMarker marker = new ValueMarker(position);  // position is the value on the axis
     	marker.setPaint(Color.black);
@@ -132,6 +152,32 @@ public class PDFGraphiques {
 
     	XYPlot plot = (XYPlot) barChart.getPlot();
     	plot.addDomainMarker(marker);
+    	*/
+    	
+    	CategoryPlot plot = barChart.getCategoryPlot();
+    	
+        Color rougeTrivia = new Color(180,5,22);
+    	
+    	BarRenderer barRenderer = ((BarRenderer) plot.getRenderer());
+    	
+    	barRenderer.setBarPainter(new StandardBarPainter());
+    	
+    	barRenderer.setSeriesPaint(0, rougeTrivia);
+    	
+    	ValueAxis rangeAxis = plot.getRangeAxis();
+    	/*
+    	CategoryAxis xAxis = plot.getDomainAxis();
+    	
+    	if (colonnes.size() <= 3)
+    		xAxis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
+    	
+    	else if (colonnes.size() > 3 && colonnes.size() < 8)  	
+    		xAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
+    	
+    	else
+    		xAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
+		*/
+    	rangeAxis.setRange(0.0, 100.0);
     	
     	barChart.removeLegend();
     	
@@ -148,6 +194,53 @@ public class PDFGraphiques {
     	
     	JFreeChart barChart = ChartFactory.createBarChart("Promotability score", "", "", 
 				dataset, PlotOrientation.VERTICAL, true, true, false);
+    	
+    	CategoryPlot plot = barChart.getCategoryPlot();
+    	
+        Color rougeTrivia = new Color(180,5,22);
+    	
+    	BarRenderer barRenderer = ((BarRenderer) plot.getRenderer());
+    	
+    	barRenderer.setBarPainter(new StandardBarPainter());
+    	
+    	barRenderer.setSeriesPaint(0, rougeTrivia);
+    	
+    	ValueAxis rangeAxis = plot.getRangeAxis();
+    	
+    	rangeAxis.setRange(0.0, 100.0);
+    	
+    	barChart.removeLegend();
+    	
+    	return barChart;
+    }
+    
+    public static JFreeChart createBarChartClasse(int tab[]){
+    	
+    	DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    	
+    	String[] tab2 = {"Identifier", "Indicator", "Quantity", "Date", "Text", "Code"};
+    	
+    	
+    	for (int i = 0; i < tab.length; i++) {
+			dataset.addValue(tab[i], "Average quality score", tab2[i]);
+		}
+    	
+    	JFreeChart barChart = ChartFactory.createBarChart("Average quality score per class", "", "", 
+				dataset, PlotOrientation.VERTICAL, true, true, false);
+    	
+    	CategoryPlot plot = barChart.getCategoryPlot();
+    	
+        Color rougeTrivia = new Color(180,5,22);
+    	
+    	BarRenderer barRenderer = ((BarRenderer) plot.getRenderer());
+    	
+    	barRenderer.setBarPainter(new StandardBarPainter());
+    	
+    	barRenderer.setSeriesPaint(0, rougeTrivia);
+    	
+    	ValueAxis rangeAxis = plot.getRangeAxis();
+    	
+    	rangeAxis.setRange(0.0, 100.0);
     	
     	barChart.removeLegend();
     	
@@ -281,14 +374,18 @@ public class PDFGraphiques {
     	    document.newPage();
     	  }
     
-    public static void writeChartToPDF(PDFGraphiques PDF, String fileName, DataAuditModele model) {
+    public static void editPDF(PDFGraphiques PDF, String fileName, DataAuditModele model) {
         PdfWriter writer = null;
      
-        Document document = new Document();
+        Document document = new Document(PageSize.A4, 36, 36, 60, 36);
      
         try {
         	
             writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
+            
+            TableHeader event = new TableHeader();
+            
+            writer.setPageEvent(event);
             
             document.open();
             
@@ -311,7 +408,11 @@ public class PDFGraphiques {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         document.close();
+        /*
+        manipulatePdf(document, fileName);
+        */
     }
     
     public static void createTable(Paragraph subCatPart, String[] vf)
@@ -379,22 +480,48 @@ public class PDFGraphiques {
     public void addMarkPromPage(Document document, PdfWriter writer) throws DocumentException{
     	
     	Paragraph titre = new Paragraph();
-	    addEmptyLine(titre, 3);	    
+	    addEmptyLine(titre, 1);	    
 	    titre.add(new Paragraph("Marketability and promotability scores", titreFont));
-	    addEmptyLine(titre, 3);	    
+	    addEmptyLine(titre, 20);	    
 	    titre.setAlignment(Element.ALIGN_CENTER);   
 	    document.add(titre);
-    	
+	    
+	    float moyM = 0;
+	    
+	    for (int i = 0; i < this.getColonneM().size(); i ++){
+	    	moyM += this.getColonneM().get(i).getPourcentagesCasesRemplies();
+	    }
+	    
+	    moyM = moyM / (float) this.getColonneM().size();
+	    
+	    float moyP = 0;
+	    
+	    for (int i = 0; i < this.getColonneP().size(); i ++){
+	    	moyP += this.getColonneP().get(i).getPourcentagesCasesRemplies();
+	    }
+	    
+	    moyP = moyP / (float) this.getColonneP().size();
+	    
+	    Paragraph moyMarketability = new Paragraph();
+	    moyMarketability.add("Average marketability score : " + Math.round(moyM) + "%");
+	    addEmptyLine(moyMarketability, 20);
+	    document.add(moyMarketability);
+	    
+	    Paragraph moyPromotability = new Paragraph();
+	    moyPromotability.add("Average promotability score : " + Math.round(moyP) + "%");
+	    document.add(moyPromotability);
+	    
+	    
         // Bar graphiqueMarketability
         
         JFreeChart marketability = createBarChartMarketability(this.getColonneM());
         
         PdfContentByte contentByte = writer.getDirectContent();
         
-        PdfTemplate tBarre1 = contentByte.createTemplate(330, 230);
+        PdfTemplate tBarre1 = contentByte.createTemplate(460, 230);
 
-        Graphics2D g2dbarre = tBarre1.createGraphics(330, 230, new DefaultFontMapper());
-        Rectangle2D r2dbarre = new Rectangle2D.Double(0, 0, 330, 230);
+        Graphics2D g2dbarre = tBarre1.createGraphics(460, 230, new DefaultFontMapper());
+        Rectangle2D r2dbarre = new Rectangle2D.Double(0, 0, 460, 230);
  
         marketability.draw(g2dbarre, r2dbarre);;
         
@@ -404,17 +531,17 @@ public class PDFGraphiques {
         
         JFreeChart promotability = createBarChartPromotability(this.getColonneP());
         
-        PdfTemplate tBarre2 = contentByte.createTemplate(330, 230);
+        PdfTemplate tBarre2 = contentByte.createTemplate(460, 230);
 
-        Graphics2D g2dbarre2 = tBarre2.createGraphics(330, 230, new DefaultFontMapper());
-        Rectangle2D r2dbarre2 = new Rectangle2D.Double(0, 0, 330, 230);
+        Graphics2D g2dbarre2 = tBarre2.createGraphics(460, 230, new DefaultFontMapper());
+        Rectangle2D r2dbarre2 = new Rectangle2D.Double(0, 0, 460, 230);
  
         promotability.draw(g2dbarre2, r2dbarre2);;
         
         g2dbarre2.dispose();
         
-        contentByte.addTemplate(tBarre1, 120, 450);
-        contentByte.addTemplate(tBarre2, 120, 100);
+        contentByte.addTemplate(tBarre1, 40, 460);
+        contentByte.addTemplate(tBarre2, 40, 140);
         
         document.newPage();
     }
@@ -428,7 +555,7 @@ public class PDFGraphiques {
         Paragraph subPara = new Paragraph();
         
 	    addEmptyLine(subPara, 2);
-	    
+
 	    String para = "Field name : " + colonne.getNomColonne() +
 	    	"\n Storage : " + colonne.getTypeDeDonnee();
 	    if (colonne.isStringValues()){
@@ -443,17 +570,17 @@ public class PDFGraphiques {
         		"\n Number of incorrect entries : " + colonne.getNbCasesIncorrectes();
         
 	    subPara.add(new Paragraph(para));
-	    
+
 	    addEmptyLine(subPara, 1);
-	    
+
 	    if (colonne.getValeursFrequentes().length != 0){
 	    	subPara.add(new Paragraph("The three most frequent entries : "));
 		    createTable(subPara, colonne.getValeursFrequentes());		    
 		    addEmptyLine(subPara, 1);
 	    }
-	    
+
 	    addEmptyLine(subPara, 1);
-	    
+
 	    if (colonne.isStringValues()){
 	    	if (colonne.getMappingString().getValeursIncorrectes().size() != 0){
 	    		subPara.add(new Paragraph("Incorrect values from the mapping filter : "));
@@ -468,9 +595,9 @@ public class PDFGraphiques {
 			    addEmptyLine(subPara, 1);
 	    	}
 	    }
-	    
+
 	    addEmptyLine(subPara, 1);
-	    
+
 	    if (colonne.getValeursListeSelectionnees().size() != 0){
 	    	if (colonne.isKeepOrRemove()){
 	    		subPara.add(new Paragraph("Kept values : "));
@@ -486,6 +613,7 @@ public class PDFGraphiques {
         document.add(subPara);
         writer.getPageNumber();
         document.newPage();
+        
         
         
         // Pie
@@ -525,13 +653,15 @@ public class PDFGraphiques {
     public void addClassTable(Document document, DataAuditModele model, PdfWriter writer) throws DocumentException{
     	
     	Paragraph titre = new Paragraph();
-	    addEmptyLine(titre, 3);	    
+	    addEmptyLine(titre, 1);	    
 	    titre.add(new Paragraph("Class table", titreFont));
 	    addEmptyLine(titre, 3);	    
 	    titre.setAlignment(Element.ALIGN_CENTER);   
 	    document.add(titre);
 	    
 	    String [] tabClass = new String[18];
+	    
+	    int [] tabValeur = new int[6];
 	    
 	    tabClass[0] = "Identifier";
 	    tabClass[3] = "Indicator";
@@ -541,6 +671,7 @@ public class PDFGraphiques {
 	    tabClass[15] = "Code";
 	    
 	    int nbClasse = 1;
+	    int z = 0;
 	    for (int i = 1; i < 18; i += 3){
 	    	int nb = 0;
 	    	float pourcentage = 0;
@@ -553,17 +684,71 @@ public class PDFGraphiques {
 	    	tabClass[i] = "" + nb;
 	    	pourcentage = pourcentage / nb;	    	
 	    	tabClass[i+1] = Math.round(pourcentage) + "%";
-	    	
+	    	tabValeur[z] = Math.round(pourcentage);
 	    	nbClasse ++;
+	    	z ++;
 	    }
 	    
 	    Paragraph tab = new Paragraph();
 	    createClassTable(tab, tabClass);
 	    document.add(tab);	    
-        writer.getPageNumber();
+        //writer.getPageNumber();
+	    
+        JFreeChart classeBarChart = createBarChartClasse(tabValeur);
+        
+        PdfContentByte contentByte = writer.getDirectContent();
+        
+        PdfTemplate tbarChart = contentByte.createTemplate(460, 230);
+
+        Graphics2D g2dpie = tbarChart.createGraphics(460, 230, new DefaultFontMapper());
+        Rectangle2D r2dpie = new Rectangle2D.Double(0, 0, 460, 230);
+ 
+        classeBarChart.draw(g2dpie, r2dpie);;
+        
+        g2dpie.dispose();
+        
+        contentByte.addTemplate(tbarChart, 50, 160);
+	    
         document.newPage();
     }
+    
+   /* 
+    public static void manipulatePdf(Document document, String dest)
+            throws IOException, DocumentException {
 
+            // step 2
+            PdfCopy copy
+                = new PdfCopy(document, new FileOutputStream(dest));
+            // step 3
+            document.open();
+            // step 4
+            PdfReader reader;
+            int page_offset = 0;
+            int n;
+            // Create a list for the bookmarks
+            ArrayList<HashMap<String, Object>> bookmarks = new ArrayList<HashMap<String, Object>>();
+            List<HashMap<String, Object>> tmp;
+
+                reader = new PdfReader(dest);
+                // merge the bookmarks
+                tmp = SimpleBookmark.getBookmark(reader);
+                SimpleBookmark.shiftPageNumbers(tmp, page_offset, null);
+                bookmarks.addAll(tmp);
+                // add the pages
+                n = reader.getNumberOfPages();
+                page_offset += n;
+                for (int page = 0; page < n; ) {
+                    copy.addPage(copy.getImportedPage(reader, ++page));
+                }
+                copy.freeReader(reader);
+                reader.close();
+            
+            // Add the merged bookmarks
+            copy.setOutlines(bookmarks);
+            // step 5
+            document.close();
+        }
+*/
 	
 }
 

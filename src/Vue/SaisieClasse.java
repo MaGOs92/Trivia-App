@@ -228,7 +228,7 @@ public class SaisieClasse extends JDialog implements ActionListener {
 		setVisible(true);
  	}
  
- 	
+
  	public void actionPerformed(ActionEvent evt) {
  		
  		Object source = evt.getSource();

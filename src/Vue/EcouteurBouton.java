@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
+
 import Modele.Colonne;
 import Modele.ConnexionModele;
 import Modele.ImportationModele;
@@ -108,7 +109,7 @@ public void actionPerformed(ActionEvent e){
 			
 			PDFGraphiques PDF = new PDFGraphiques(vue.getDAcontroller().getDAModele(), MP.getColonnesSelected(), PP.getColonnesSelected());
 			
-			Modele.PDFGraphiques.writeChartToPDF(PDF, nomDuFichier, vue.getDAcontroller().getDAModele());
+			Modele.PDFGraphiques.editPDF(PDF, nomDuFichier, vue.getDAcontroller().getDAModele());
 			
 			Object[] options = { "Exit the program", "Return to mapping menu" };
 			int option = JOptionPane.showOptionDialog(null, "A new PDF reporting has been generated : " + nomDuFichier, "DataAudit report generated",
