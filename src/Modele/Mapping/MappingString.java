@@ -70,7 +70,7 @@ public class MappingString extends Mapping {
 						
 						while(resultat.next()){
 							
-							this.getValeursIncorrectes().add(new ValeurIncorrecteString(resultat.getString(1), resultat.getInt(2), colonne.getNbLignesTotales()));
+							this.getValeursIncorrectes().add(new ValeurIncorrecteString(resultat.getString(1), resultat.getInt(2) - 1, colonne.getNbLignesTotales()));
 
 						}
 					} catch (SQLException e) {
